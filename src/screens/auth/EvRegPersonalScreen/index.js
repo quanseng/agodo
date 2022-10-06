@@ -16,13 +16,13 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_PHONE_VERIFY } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_ID } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 
-const RegPersonalEvScreen = (props) => {
+const EvRegPersonalScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
@@ -68,7 +68,7 @@ const RegPersonalEvScreen = (props) => {
   }
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_PHONE_VERIFY)
+    navigation.navigate(ROUTE_EV_REG_ID)
   }
   const [currentPosition, setCurrentPosition] = useState(0);
   return (
@@ -111,7 +111,7 @@ const RegPersonalEvScreen = (props) => {
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Larst Name`}
+                      label={`Last Name`}
                       placeholder={``}
                       value={formData['phone']}
                       returnKeyType="next"
@@ -153,4 +153,4 @@ const RegPersonalEvScreen = (props) => {
   )
 }
 
-export default RegPersonalEvScreen;
+export default EvRegPersonalScreen;

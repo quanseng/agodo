@@ -18,7 +18,7 @@ import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import MyCodeField from '../../../components/MyCodeField';
-import { ROUTE_REG_PERSONAL_EV, ROUTE_SIGNUP } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_PERSONAL, ROUTE_SIGNUP } from '../../../routes/RouteNames';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import AuthStyle from '../../../styles/AuthStyle';
 
@@ -53,7 +53,7 @@ const SignupTypeScreen = (props) => {
   const [value, setValue] = useState('');
 
   const onPressEditPhone = () => {
-    navigation.navigate(ROUTE_REG_PERSONAL_EV);
+    //navigation.navigate();
   }
 
   const onPressResendCode = () => {
@@ -62,7 +62,7 @@ const SignupTypeScreen = (props) => {
   }
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_REG_PERSONAL_EV);
+    navigation.navigate(ROUTE_EV_REG_PERSONAL);
   }
 
   const userTypeItemList = [

@@ -73,7 +73,7 @@ const IntroductionScreen = (props) => {
     return (
       <ScrollView style={[styles.slideItem]}>
         <View style={[styles.slideImageWrapper]}>
-          <Image source={item.image} style={[styles.slideImage]} resizeMode="cover" />
+          <Image source={item.image} style={[styles.slideImage]} resizeMode="cover" fadeDuration={100}  />
         </View>
         <View style={[styles.slideTextWrapper]}>
           <View style={[styles.slidePrimaryTextWrapper]}>

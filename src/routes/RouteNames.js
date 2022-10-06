@@ -12,12 +12,17 @@ export const ROUTE_HIDDEN_TAB = "HiddenTab";
 
 
 export const ROUTE_SPLASH = "Splash";
+export const ROUTE_TEST = "Test";
+export const ROUTE_TEST1 = "Test1";
 export const ROUTE_INTRODUCTION = "Introduction";
 export const ROUTE_SIGNUP = "SignUp";
 export const ROUTE_PHONE_VERIFY = "PhoneVerify";
 export const ROUTE_SIGNUP_TYPE = "SignUpType";
-export const ROUTE_REG_PERSONAL_EV = "RegPersonalEv";
-
+export const ROUTE_EV_REG_PERSONAL = "EvRegPersonal";
+export const ROUTE_EV_REG_ID = "EvRegId";
+export const ROUTE_EV_REG_CHARGER = "EvRegCharger";
+export const ROUTE_EV_REG_CREDIT_CARD = "EvRegCreditCard";
+export const ROUTE_EV_REG_VEHICLE = "EvRegVehicle";
 
 
 

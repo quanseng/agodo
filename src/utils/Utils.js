@@ -2,6 +2,7 @@
 import { Platform } from 'react-native';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 export const isAndroid = Platform.OS === 'android';
 export const isIos = Platform.OS === 'ios';
@@ -9,11 +10,9 @@ export const apiRequest = async (method, url, body = null, headers = null, isCan
   const onSuccess = (response) => {
     return response;
   }
-
   const onError = (error) => {
     return Promise.reject(error);
   }
-
   let payload = {
     method: method,
     url: url,
@@ -50,5 +49,27 @@ export const setAppMainStatusBarStyle = (statusbar) => {
   statusbar.setBackgroundColor('rgba(255,255,255,0)');
   statusbar.setTranslucent(true);
 }
-
+export const showCarema = async (opt={}) => {
+  const options = {
+    mediaType: 'photo',
+    quality: 1,
+    cameraType: 'back',
+    saveToPhotos: true,
+    presentationStyle: 'pageSheet'
+  }
+  const result = await launchCamera({...options, ...opt});
+  console.log("launchCamera options,result::::", {...options, ...opt}, result)
+  return result;
+}
+export const showImageLibrary = async (opt={}) => {
+  const options = {
+    mediaType: 'photo',
+    quality: 1,
+    saveToPhotos: true,
+    presentationStyle: 'pageSheet'
+  }
+  const result = await launchImageLibrary({...options, ...opt});
+  console.log("launchImageLibrary options,result::::", {...options, ...opt}, result)
+  return result;
+}
 

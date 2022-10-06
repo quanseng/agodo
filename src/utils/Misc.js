@@ -144,6 +144,7 @@ export const showToast = (option = null) => { //show toast something like native
     animation: true,
     hideOnPress: true,
     delay: 0,
+    //opacity: 0.75,
     onShow: () => {
       // calls on toast\`s appear animation start
     },

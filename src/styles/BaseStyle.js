@@ -3,6 +3,13 @@ import { COLOR, SIZE, STATUSBAR_HEIGHT } from "../utils/Constants";
 const { width, height } = Dimensions.get("window");
 
 const BaseStyle = StyleSheet.create({
+  positionAbsolute:{
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    right: 0,
+    top: 0,
+  },
   flex: {
     flex: 1
   },
@@ -50,6 +57,9 @@ const BaseStyle = StyleSheet.create({
   },
   textLightDark: {
     color: COLOR.FONT_LIGHT_DARK
+  },
+  textDark: {
+    color: COLOR.FONT_DARK
   },
   textGray: {
     color: COLOR.FONT_GRAY
