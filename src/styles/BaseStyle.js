@@ -55,6 +55,9 @@ const BaseStyle = StyleSheet.create({
   bgLightGray: {
     backgroundColor: COLOR.BG_GRAY,
   },
+  textBlack: {
+    color: COLOR.BLACK
+  },
   textLightDark: {
     color: COLOR.FONT_LIGHT_DARK
   },
@@ -98,7 +101,7 @@ const BaseStyle = StyleSheet.create({
   },
   textSm: {
     fontSize: 13,
-    lineHeight: 20,
+    lineHeight: 19,
   },
   textXs: {
     fontSize: 11,

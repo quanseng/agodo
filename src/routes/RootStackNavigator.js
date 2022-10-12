@@ -5,7 +5,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import AuthStackNavigator from './AuthStackNavigator';
 import DrawerStackNavigator from './DrawerNavigator';
 
-import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_PHONE_VERIFY, ROUTE_EV_REG_PERSONAL, ROUTE_EV_REG_VEHICLE, ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_SPLASH, ROUTE_TEST, ROUTE_TEST1, ROUTE_EV_REG_ID, ROUTE_EV_REG_CHARGER, ROUTE_EV_REG_CREDIT_CARD } from './RouteNames';
+import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_PHONE_VERIFY, ROUTE_EV_REG_PERSONAL, ROUTE_EV_REG_VEHICLE, ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_SPLASH, ROUTE_TEST, ROUTE_TEST1, ROUTE_EV_REG_ID, ROUTE_EV_REG_CHARGER, ROUTE_EV_REG_CREDIT_CARD, ROUTE_RG_REG_PAYMENT, ROUTE_TERMS_CONDITION, ROUTE_WELCOME, ROUTE_HOME, ROUTE_USER_TAB_NAVIGATOR } from './RouteNames';
 import SplashScreen from '../screens/SplashScreen';
 import { TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
@@ -21,6 +21,11 @@ import EvRegVehicleScreen from '../screens/auth/EvRegVehicleScreen';
 import EvRegIdScreen from '../screens/auth/EvRegIdScreen';
 import EvRegChargerScreen from '../screens/auth/EvRegChargerScreen';
 import EvRegCreditCardScreen from '../screens/auth/EvRegCreditCardScreen';
+import RgRegPaymentScreen from '../screens/auth/RgRegPaymentScreen';
+import TermsConditionScreen from '../screens/auth/TermsConditionScreen';
+import WelcomeScreen from '../screens/auth/WelcomeScreen';
+import HomeScreen from '../screens/user/HomeScreen';
+import UserTabNavigator from './user/UserTabNavigator';
 
 const WhiteTheme = {
   ...DefaultTheme,
@@ -37,7 +42,7 @@ const RootStackNavigator = () => {
   return (
     <NavigationContainer theme={WhiteTheme}>
       <Stack.Navigator
-        initialRouteName={ROUTE_EV_REG_CREDIT_CARD} //ROUTE_TEST, ROUTE_TEST1, ROUTE_INTRODUCTION
+        initialRouteName={ROUTE_USER_TAB_NAVIGATOR} //ROUTE_TEST, ROUTE_TEST1, ROUTE_USER_TAB_NAVIGATOR, ROUTE_INTRODUCTION
         screenOptions={{
           presentation: "card", //modal, card, transparentModal
           headerMode: "screen",
@@ -121,7 +126,7 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name={ROUTE_EV_REG_CREDIT_CARD}
           component={EvRegCreditCardScreen}
           options={{
@@ -135,7 +140,34 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-
+        <Stack.Screen
+          name={ROUTE_RG_REG_PAYMENT}
+          component={RgRegPaymentScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={ROUTE_TERMS_CONDITION}
+          component={TermsConditionScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={ROUTE_WELCOME}
+          component={WelcomeScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={ROUTE_HOME}
+          component={HomeScreen}
+          options={{
+            headerShown: false
+          }}
+        />
 
 
 
@@ -144,10 +176,11 @@ const RootStackNavigator = () => {
 
 
         <Stack.Screen
-          name={ROUTE_DRAWER_STACK_NAVIGATOR}
-          component={DrawerStackNavigator}
+          name={ROUTE_USER_TAB_NAVIGATOR}
+          component={UserTabNavigator}
           options={{
             headerShown: false,
+            title: "Dashboard"
           }}
         />
 

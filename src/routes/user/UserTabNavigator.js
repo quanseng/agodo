@@ -2,13 +2,12 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import MyTabBar from '../../components/MyTabBar';
-import UserDashboardStackNavigator from './UserDashboardStackNavigator';
-import UserWorkoutsStackNavigator from './UserWorkoutsStackNavigator';
-import UserChallengesStackNavigator from './UserChallengesStackNavigator';
-import UserRecipesStackNavigator from './UserRecipesStackNavigator';
 
-import { ROUTE_CHALLENGES_TAB, ROUTE_DASHBOARD_TAB, ROUTE_HIDDEN_TAB, ROUTE_RECIPES_TAB, ROUTE_WORKOUTS_TAB } from '../RouteNames';
-import { useSelector } from 'react-redux';
+import { ROUTE_HOME_TAB, ROUTE_NOTIFICATION_TAB, ROUTE_HISTORY_TAB, ROUTE_SETTING_TAB } from '../RouteNames';
+import UserHomeStackNavigator from './UserHomeStackNavigator';
+import UserNotificationStackNavigator from './UserNotificationStackNavigator';
+import UserHistoryStackNavigator from './UserHistoryStackNavigator';
+import UserSettingStackNavigator from './UserSettingStackNavigator';
 // import UserHiddenStackNavigator from './UserHiddenStackNavigator';
 
 const BottomTab = createBottomTabNavigator();
@@ -17,7 +16,7 @@ export default UserTabNavigator = () => {
 
   return (
     <BottomTab.Navigator
-      initialRouteName={ROUTE_DASHBOARD_TAB}
+      initialRouteName={ROUTE_HOME_TAB}
       tabBar={props => <MyTabBar {...props} />}
       screenOptions={
         {
@@ -25,12 +24,11 @@ export default UserTabNavigator = () => {
         }        
       }
     >
-      <BottomTab.Screen name={ROUTE_DASHBOARD_TAB} component={UserDashboardStackNavigator} options={{ headerShown: false }} />
-      <BottomTab.Screen name={ROUTE_WORKOUTS_TAB} component={UserWorkoutsStackNavigator} options={{ headerShown: false }} />
-      <BottomTab.Screen name={ROUTE_CHALLENGES_TAB} component={UserChallengesStackNavigator} options={{ headerShown: false }} />
-      <BottomTab.Screen name={ROUTE_RECIPES_TAB} component={UserRecipesStackNavigator} options={{ headerShown: false }} />
-
-      {/* <FluidTab.Screen name={ROUTE_HIDDEN_TAB} component={ UserHiddenStackNavigator} options={{ headerShown: false }} /> */}
+      <BottomTab.Screen name={ROUTE_HOME_TAB} component={UserHomeStackNavigator} options={{ headerShown: false }} />
+      <BottomTab.Screen name={ROUTE_NOTIFICATION_TAB} component={UserNotificationStackNavigator} options={{ headerShown: false }} />
+      <BottomTab.Screen name={ROUTE_HISTORY_TAB} component={UserHistoryStackNavigator} options={{ headerShown: false }} />
+      <BottomTab.Screen name={ROUTE_SETTING_TAB} component={UserSettingStackNavigator} options={{ headerShown: false }} />
+     
 
     </BottomTab.Navigator>
   )

@@ -1,22 +1,25 @@
 import React from 'react';
-import { ROUTE_CHALLENGES } from '../RouteNames';
+
+import { ROUTE_RECIPES } from '../RouteNames';
+
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
+//const Stack = createStackNavigator();
 
-export default UserChallengesStackNavigator = () => {
+export default UserSettingStackNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName={ROUTE_CHALLENGES}
+      initialRouteName={ROUTE_RECIPES}
     >
       {/* <Stack.Screen
-        name={ROUTE_CHALLENGES}
-        component={ChallengeListScreen}
+        name={ROUTE_RECIPES}
+        component={RecipeListScreen}
         options={{
           headerShown: false
         }}
       /> */}
-      
+     
     </Stack.Navigator>
   );
 };

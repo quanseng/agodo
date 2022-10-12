@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
 
-export default UserWorkoutsStackNavigator = () => {
+export default UserHistoryStackNavigator = () => {
   return (
     <Stack.Navigator
       initialRouteName={ROUTE_WORKOUTS} //ROUTE_WORKOUTS,ROUTE_WORKOUT_DETAIL

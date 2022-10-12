@@ -16,7 +16,7 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_CREDIT_CARD, ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
@@ -68,7 +68,7 @@ const EvRegChargerScreen = (props) => {
   }
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_VEHICLE)
+    navigation.navigate(ROUTE_EV_REG_CREDIT_CARD)
   }
   const [currentPosition, setCurrentPosition] = useState(1);
 

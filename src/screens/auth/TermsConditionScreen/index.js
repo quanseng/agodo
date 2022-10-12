@@ -16,13 +16,11 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
+import { ROUTE_PHONE_VERIFY } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
-import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
-import MyStepIndicator from '../../../components/MyStepIndicator';
 
-const EvRegVehicleScreen = (props) => {
+const TermsConditionScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
@@ -67,10 +65,28 @@ const EvRegVehicleScreen = (props) => {
     return errorList
   }
 
+
+  const [showDropDown, setShowDropDown] = useState(false);
+  const genderList = [
+    {
+      label: "Male",
+      value: "male",
+    },
+    {
+      label: "Female",
+      value: "female",
+    },
+    {
+      label: "Others",
+      value: "others",
+    },
+
+  ];
+  const [gender, setGender] = useState("");
+
   const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_VEHICLE)
+    navigation.navigate(ROUTE_PHONE_VERIFY)
   }
-  const [currentPosition, setCurrentPosition] = useState(3);
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -82,57 +98,32 @@ const EvRegVehicleScreen = (props) => {
             <View style={[AuthStyle.authFormWrapper]}>
               <View>
                 <View style={[AuthStyle.authFormHeader]}>
-                  <Text style={[BaseStyle.textLg1, BaseStyle.textBold, BaseStyle.textPrimary]}>Complete the process</Text>
-                </View>
-                <View style={[AuthStyle.regStepBarContainer]}>
-                  <MyStepIndicator
-                    stepCount={4}
-                    currentPosition={currentPosition}
-                    setCurrentPosition={setCurrentPosition}
-                  />
+                  <Text style={[BaseStyle.textLg1, BaseStyle.textBold, BaseStyle.textPrimary]}>Terms and Conditions</Text>
+                  <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Accept the terms and conditions to complete the process.</Text>
                 </View>
                 <View style={[AuthStyle.authFormBody]}>
-                  <View style={[CustomStyle.formControl, BaseStyle.mb6]}>
-                    <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Vehicle Details (Optional)</Text>
+                  <View style={[CustomStyle.formControl]}>
+                    <View style={[styles.termsWrapper]}>
+                      <Text style={[BaseStyle.textSm]}>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Lectus sit amet est placerat in egestas. 
+                      {"\n"} {"\n"}
+Sed adipiscing diam donec adipiscing tristique. Ultricies mi quis hendrerit dolormagna. In tellus integer feugiat scelerisque. Sed arcu non odio euismod. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum. 
+                      </Text>
+                    </View>
                   </View>
-
-                  <View style={CustomStyle.formControl}>
-                    <MyTextInput
-                      label={`Brand`}
-                      placeholder={``}
-                      value={formData['phone']}
-                      returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                     
-                    />
-                  </View>
-                  <View style={CustomStyle.formControl}>
-                    <MyTextInput
-                      label={`Color`}
-                      placeholder={``}
-                      value={formData['phone']}
-                      returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                      
-                    />
-                  </View>
-                  <View style={CustomStyle.formControl}>
-                    <MyTextInput
-                      label={`Registration`}
-                      placeholder={``}
-                      value={formData['phone']}
-                      returnKeyType="next"
-                      keyboardType="email-address"
-                      onChangeText={text => onChangeFormField("phone", text)}                   
-                    />
-                  </View>
+                  <Text style={[BaseStyle.textSm, BaseStyle.textPrimary, BaseStyle.mb3]}>Read Terms and Conditions</Text>
                 </View>
               </View>
 
-              <View style={[AuthStyle.authFormFooter]}>                 
+              <View style={[AuthStyle.authFormFooter]}>
+                <View style={[CustomStyle.formControl]}>
+                  <Text style={[BaseStyle.textXs, BaseStyle.textGray]}>
+                  By proceeding, I agree to AGODO <Text style={[BaseStyle.textXs, BaseStyle.textPrimary]}>Terms of Use</Text> and acknowlege that I have read the <Text style={[BaseStyle.textXs, BaseStyle.textPrimary]}>Privacy Policy</Text>.
+                  </Text>
+                </View>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
-                    NEXT
+                    Agree
                   </MyButton>
                 </View>
               </View>
@@ -144,4 +135,4 @@ const EvRegVehicleScreen = (props) => {
   )
 }
 
-export default EvRegVehicleScreen;
+export default TermsConditionScreen;

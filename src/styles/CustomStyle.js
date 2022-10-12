@@ -29,7 +29,7 @@ const CustomStyle = StyleSheet.create({
         width: width / 3,
         height: (width / 3) * 108 / 540
     },
-    iconBackArrow:{
+    iconBackArrow: {
         width: SIZE.APP_ICON_SIZE * 1,
         height: SIZE.APP_ICON_SIZE * 1,
     },
@@ -41,13 +41,20 @@ const CustomStyle = StyleSheet.create({
         paddingVertical: SIZE.APP_BODY_PADDING * 0.7,
         paddingHorizontal: SIZE.APP_BODY_PADDING,
     },
-    formControl: {         
+    formControl: {
         marginBottom: SIZE.APP_BODY_PADDING / 2,
     },
-    
-
-
-
+    avatarWrapper: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    avatar: {
+        width: (width / 2 > height * 0.275 ? height * 0.275 : width / 2),
+        height: (width / 2 > height * 0.275 ? height * 0.275 : width / 2),
+        borderRadius: (width / 2 > height * 0.275 ? height * 0.275 : width / 2),
+    },
     header: {
         width: '100%',
         flexDirection: 'row',
@@ -82,8 +89,53 @@ const CustomStyle = StyleSheet.create({
         fontSize: 18,
         color: 'white',
     },
-    
-
+    radioBox: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    radioInlineList: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        //width: '100%',
+        justifyContent: 'space-between',
+        paddingVertical: SIZE.APP_BODY_PADDING / 2,
+        paddingHorizontal: SIZE.APP_BODY_PADDING / 2,
+        marginLeft: -SIZE.APP_BODY_PADDING / 2,
+        marginRight: -SIZE.APP_BODY_PADDING / 2,
+        //backgroundColor: COLOR.BLACK,
+    },
+    searchText: {
+        borderRadius: 20,
+        backgroundColor: COLOR.BG_GRAY,
+        color: COLOR.APP,
+        textAlign: 'center',
+    },
+    hr: {
+        width: '100%',
+        height: 3,
+        backgroundColor: COLOR.BG_GRAY,
+        marginTop: 2,
+    },
+    map: {
+        ...StyleSheet.absoluteFillObject,
+    },
+    mapSearchButton: {
+        position: 'absolute',
+        bottom: 20,
+        right: 12,
+        backgroundColor: COLOR.WHITE,
+        width: 60,
+        height: 60,
+        borderRadius: 60,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    mapSearchIcon: {
+        width: SIZE.APP_ICON_SIZE,
+        height: SIZE.APP_ICON_SIZE,
+    },
 
 });
 

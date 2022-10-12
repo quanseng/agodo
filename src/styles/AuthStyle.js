@@ -69,6 +69,9 @@ const AuthStyle = StyleSheet.create({
     idSideTabItemTextActive:{
         color: COLOR.WHITE
     },
+    paymentMethodListWrapper:{
+       
+    },
 });
 
 

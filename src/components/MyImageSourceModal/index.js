@@ -38,19 +38,24 @@ const MyImageSourceModal = (props) => {
   };
 
   const handleSheetChanges = useCallback((index) => {
-    //console_log('handleSheetChanges', index);
+    console_log('handleSheetChanges', index);
     if (index === 0) {
       closeModal()
     }
   }, []);
 
   const handleDismiss = useCallback(() => {
-    //console_log("on dismissssssssssssss")
+    console_log("on dismissssssssssssss")
     setVisible(false)
   }, []);
 
+  const onPressBackdrop = () => {
+    console_log("on onPressBackdrop")
+    setVisible(false)
+  };
+
   const renderBackdrop = useCallback(
-    (props) => <BottomSheetBackdrop {...props} />,
+    (props) => <BottomSheetBackdrop {...props} pressBehavior={"close"} onPress={onPressBackdrop()} />,
     []
   );
 
@@ -62,41 +67,38 @@ const MyImageSourceModal = (props) => {
   }
 
   return (
-    <BottomSheetModalProvider>
-      <View style={[BaseStyle.flex, BaseStyle.positionAbsolute]}>
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          // detached={true}
-          enableDismissOnClose={true}
-          onDismiss={handleDismiss}
-          backdropComponent={renderBackdrop}
-          onChange={handleSheetChanges}
-        >
-          <View style={styles.contentContainer}>
-            <View style={[styles.titleWrapper]}>
-              <Text style={[BaseStyle.textLeft, BaseStyle.textMd1, BaseStyle.textBold]}>Select an action</Text>
+    <>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={1}
+        snapPoints={snapPoints}
+        // detached={true}
+        enableDismissOnClose={true}
+        onDismiss={handleDismiss}
+        backdropComponent={renderBackdrop}
+        onChange={handleSheetChanges}
+      >
+        <View style={styles.contentContainer}>
+          <View style={[styles.titleWrapper]}>
+            <Text style={[BaseStyle.textLeft, BaseStyle.textMd1, BaseStyle.textBold]}>Select an action</Text>
+          </View>
+          <View style={[styles.bodyWrapper]}>
+            <View style={[styles.itemWrapper]}>
+              <TouchableOpacity onPress={() => onPressItem("camera")}>
+                <Image source={require('../../assets/images/icons/camera.png')} style={styles.icon} alt="iocn" resizeMode="contain" />
+                <Text style={[BaseStyle.textCenter, BaseStyle.textSm]}>Camera</Text>
+              </TouchableOpacity>
             </View>
-            <View style={[styles.bodyWrapper]}>
-              <View style={[styles.itemWrapper]}>
-                <TouchableOpacity onPress={() => onPressItem("camera")}>
-                  <Image source={require('../../assets/images/icons/camera.png')} style={styles.icon} alt="iocn" resizeMode="contain" />
-                  <Text style={[BaseStyle.textCenter, BaseStyle.textSm]}>Camera</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={[styles.itemWrapper]}>
-                <TouchableOpacity onPress={() => onPressItem("file")}>
-                  <Image source={require('../../assets/images/icons/folder.png')} style={styles.icon} alt="iocn" resizeMode="contain" />
-                  <Text style={[BaseStyle.textCenter, BaseStyle.textSm]}>Gallery</Text>
-                </TouchableOpacity>
-              </View>
+            <View style={[styles.itemWrapper]}>
+              <TouchableOpacity onPress={() => onPressItem("file")}>
+                <Image source={require('../../assets/images/icons/folder.png')} style={styles.icon} alt="iocn" resizeMode="contain" />
+                <Text style={[BaseStyle.textCenter, BaseStyle.textSm]}>Gallery</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </BottomSheetModal>
-      </View>
-
-    </BottomSheetModalProvider>
+        </View>
+      </BottomSheetModal>
+    </>
   )
 }
 

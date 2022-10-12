@@ -218,6 +218,7 @@ const EvRegIdScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      
       <MyImageSourceModal
         visible={visibleImageTypeModal}
         setVisible={setVisibleImageTypeModal}
