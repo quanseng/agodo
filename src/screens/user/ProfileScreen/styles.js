@@ -4,16 +4,11 @@ import { COLOR, SIZE } from "../../../utils/Constants";
 const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  homeBody:{
-    display: 'flex',
-    flex: 1,
+  flag:{
+    width: SIZE.APP_ICON_SIZE,
+    height: SIZE.APP_ICON_SIZE * 38 / 72     
   },
-  searchBtnBox:{
-    marginTop: SIZE.APP_BODY_PADDING/2,
-    width: '100%',
-  },
-   
-
+ 
 });
 
 export default styles;

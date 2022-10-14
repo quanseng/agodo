@@ -1,11 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View, Image, TouchableOpacity } from 'react-native';
-import {
-  BottomSheetModal,
-  BottomSheetModalProvider,
-  BottomSheetBackdrop,
-} from '@gorhom/bottom-sheet';
-import { TextInput } from 'react-native-paper';
+import RBSheet from "react-native-raw-bottom-sheet";
 import BaseStyle from '../../styles/BaseStyle';
 import { COLOR, SIZE } from '../../utils/Constants';
 import { console_log } from '../../utils/Misc';
@@ -13,6 +8,7 @@ import styles from './styles';
 
 const MyImageSourceModal = (props) => {
   const { visible, setVisible, setImageSourceType } = props
+  const refRBSheet = useRef();
 
   useEffect(() => {
     if (visible) {
@@ -20,45 +16,21 @@ const MyImageSourceModal = (props) => {
     } else {
       closeModal()
     }
-    return () => {
-      closeModal()
-    }
   }, [visible])
 
-  const bottomSheetModalRef = useRef(null);
-  // variables
-  const snapPoints = useMemo(() => ['1%', 150], []);
-
   const showModal = () => {
-    bottomSheetModalRef.current?.present();
+    refRBSheet.current.open()
   };
 
   const closeModal = () => {
-    bottomSheetModalRef.current?.dismiss();
-  };
-
-  const handleSheetChanges = useCallback((index) => {
-    console_log('handleSheetChanges', index);
-    if (index === 0) {
-      closeModal()
-    }
-  }, []);
-
-  const handleDismiss = useCallback(() => {
-    console_log("on dismissssssssssssss")
-    setVisible(false)
-  }, []);
-
-  const onPressBackdrop = () => {
-    console_log("on onPressBackdrop")
+    refRBSheet.current.close()
     setVisible(false)
   };
 
-  const renderBackdrop = useCallback(
-    (props) => <BottomSheetBackdrop {...props} pressBehavior={"close"} onPress={onPressBackdrop()} />,
-    []
-  );
-
+  const onClose = ()=>{
+    //console_log("onClose:::")
+    setVisible(false)
+  }
   const onPressItem = (type) => {
     closeModal()
     setTimeout(() => {
@@ -68,15 +40,26 @@ const MyImageSourceModal = (props) => {
 
   return (
     <>
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={1}
-        snapPoints={snapPoints}
-        // detached={true}
-        enableDismissOnClose={true}
-        onDismiss={handleDismiss}
-        backdropComponent={renderBackdrop}
-        onChange={handleSheetChanges}
+      <RBSheet
+        ref={refRBSheet}
+        closeOnDragDown={true}
+        closeOnPressMask={true}
+        closeDuration={10}
+        animationType="none"
+        height={150}
+        customStyles={{
+          container: {
+            borderTopLeftRadius: SIZE.APP_BODY_PADDING / 2,
+            borderTopRightRadius: SIZE.APP_BODY_PADDING / 2,
+          },
+          wrapper: {
+            backgroundColor: COLOR.BG_DARK_MASK,
+          },
+          draggableIcon: {
+            backgroundColor: COLOR.BG_SEMI_DARK,
+          }
+        }}
+        onClose={()=>onClose()}
       >
         <View style={styles.contentContainer}>
           <View style={[styles.titleWrapper]}>
@@ -97,7 +80,7 @@ const MyImageSourceModal = (props) => {
             </View>
           </View>
         </View>
-      </BottomSheetModal>
+      </RBSheet>
     </>
   )
 }

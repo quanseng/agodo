@@ -5,7 +5,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import AuthStackNavigator from './AuthStackNavigator';
 import DrawerStackNavigator from './DrawerNavigator';
 
-import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_PHONE_VERIFY, ROUTE_EV_REG_PERSONAL, ROUTE_EV_REG_VEHICLE, ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_SPLASH, ROUTE_TEST, ROUTE_TEST1, ROUTE_EV_REG_ID, ROUTE_EV_REG_CHARGER, ROUTE_EV_REG_CREDIT_CARD, ROUTE_RG_REG_PAYMENT, ROUTE_TERMS_CONDITION, ROUTE_WELCOME, ROUTE_HOME, ROUTE_USER_TAB_NAVIGATOR } from './RouteNames';
+import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_PHONE_VERIFY, ROUTE_EV_REG_PERSONAL, ROUTE_EV_REG_VEHICLE, ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_SPLASH, ROUTE_TEST, ROUTE_TEST1, ROUTE_EV_REG_ID, ROUTE_EV_REG_CHARGER, ROUTE_EV_REG_CREDIT_CARD, ROUTE_RG_REG_PAYMENT, ROUTE_TERMS_CONDITION, ROUTE_WELCOME, ROUTE_HOME, ROUTE_USER_TAB_NAVIGATOR, ROUTE_LOCATION_ENABLE } from './RouteNames';
 import SplashScreen from '../screens/SplashScreen';
 import { TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
@@ -26,6 +26,7 @@ import TermsConditionScreen from '../screens/auth/TermsConditionScreen';
 import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import HomeScreen from '../screens/user/HomeScreen';
 import UserTabNavigator from './user/UserTabNavigator';
+import LocationEnableScreen from '../screens/user/LocationEnableScreen';
 
 const WhiteTheme = {
   ...DefaultTheme,
@@ -168,7 +169,13 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-
+        <Stack.Screen
+          name={ROUTE_LOCATION_ENABLE}
+          component={LocationEnableScreen}
+          options={{
+            headerShown: false
+          }}
+        />
 
 
 

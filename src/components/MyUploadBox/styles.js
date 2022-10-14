@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 5,
     borderRadius: 100,
-    backgroundColor: COLOR.BG_SEMI_DARK,
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
   },
   deleteIcon:{
     tintColor: COLOR.WHITE,

@@ -15,6 +15,7 @@ import { COLOR } from '../../../utils/Constants';
 import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import MyImageSourceModal from '../../../components/MyImageSourceModal';
+import MyBottomSheet from '../../../components/MyBottomSheet';
 
 const MapScreen = (props) => {
   const { navigation } = props;
@@ -53,16 +54,14 @@ const MapScreen = (props) => {
     setTabUri(uri)
   }
 
-  const [visibleImageTypeModal, setVisibleImageTypeModal] = useState(false)
-  const setImageSourceType = async (type) => {
-    let uploadResult = null;
+  const [visibleSearchChargerModal, setVisibleSearchChargerModal] = useState(false)
 
-    console_log("type:::", type)
+  const onPressSarch = () => {
+    setVisibleSearchChargerModal(false);
   }
 
-
   return (
-    <SafeAreaView style={[CustomStyle.screenContainer]}>
+    <View style={[CustomStyle.screenContainer]}>
       <View style={[styles.homeBody]}>
         <MapView
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
@@ -80,20 +79,42 @@ const MapScreen = (props) => {
           style={CustomStyle.mapSearchButton}
           activeOpacity={0.75}
           onPress={() => {
-            setVisibleImageTypeModal(true)
+            setVisibleSearchChargerModal(true)
           }}>
           <Image source={require('../../../assets/images/icons/search.png')} style={[CustomStyle.mapSearchIcon]} alt="icon" resizeMode="contain" />
         </TouchableOpacity>
 
       </View>
 
-      <MyImageSourceModal
-        visible={visibleImageTypeModal}
-        setVisible={setVisibleImageTypeModal}
-        setImageSourceType={setImageSourceType}
-      />
+      {
+        (visibleSearchChargerModal) && (
+          <MyBottomSheet
+            height={230}
+            visible={visibleSearchChargerModal}
+            setVisible={setVisibleSearchChargerModal}
+          >
+            <View style={[BaseStyle.col12, BaseStyle.flex]}>
+              <View style={[CustomStyle.formControl]}>
+                <Text style={[BaseStyle.textBlack, BaseStyle.textCenter, BaseStyle.textMd1]}>Search for charger</Text>
+              </View>
+              <View style={[CustomStyle.formControl]}>
+                <MySearchChargerBox
+                />
+              </View>
 
-    </SafeAreaView>
+
+              <View style={[styles.searchBtnBox]}>
+                <View style={[BaseStyle.rowCenter]}>
+                  <MyButton mode="contained" style={CustomStyle.buttonPrimary} onPress={() => onPressSarch()}>
+                    Search
+                  </MyButton>
+                </View>
+              </View>
+            </View>
+          </MyBottomSheet>
+        )
+      }
+    </View>
   )
 }
 

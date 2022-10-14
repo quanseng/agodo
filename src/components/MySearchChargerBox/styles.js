@@ -15,8 +15,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: SIZE.APP_BODY_PADDING / 4,
     },
-    searchChargerItemContent:{
-        flex: 1,
+    searchChargerItemContent:{      
         backgroundColor: COLOR.BG_GRAY,
         borderRadius: 3,
         paddingHorizontal: SIZE.APP_BODY_PADDING / 2,

@@ -45,7 +45,18 @@ const MyScreenHeader = (props) => {
                 <Image source={require('../../assets/images/icons/arrow_left.png')} style={CustomStyle.iconBackArrow} alt="back" resizeMode="contain" />
               </TouchableOpacity>
               <View>
-                <Text numberOfLines={1} ellipsizeMode="tail" style={BaseStyle.textCenter}>{title}</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={[BaseStyle.textCenter, BaseStyle.textMd, BaseStyle.textPrimary, BaseStyle.textBold]}>{title}</Text>
+              </View>
+              <View></View>
+            </>
+          )
+        }
+         {
+          (headerType === "4") && (
+            <>
+              <View></View>
+              <View>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={[BaseStyle.textCenter, BaseStyle.textMd, BaseStyle.textPrimary, BaseStyle.textBold]}>{title}</Text>
               </View>
               <View></View>
             </>

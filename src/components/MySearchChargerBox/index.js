@@ -32,7 +32,7 @@ const MySearchChargerBox = (props) => {
               <View key={index} style={[styles.searchChargerItem]}>
                 <TouchableOpacity activeOpacity={0.75} onPress={()=>onPressItem(item.value)}>
                   <View style={[styles.searchChargerItemContent, (item.value === chargerType ? styles.searchChargerItemContentActive : null)]}>
-                    <Text> </Text>
+                    <Text></Text>
                     <Text style={[BaseStyle.textSm, styles.searchChargerItemText, (item.value === chargerType ? styles.searchChargerItemTextActive : null)]}>{item.label}</Text>
                   </View>
                 </TouchableOpacity>

@@ -51,9 +51,14 @@ const CustomStyle = StyleSheet.create({
         alignItems: 'center',
     },
     avatar: {
-        width: (width / 2 > height * 0.275 ? height * 0.275 : width / 2),
-        height: (width / 2 > height * 0.275 ? height * 0.275 : width / 2),
-        borderRadius: (width / 2 > height * 0.275 ? height * 0.275 : width / 2),
+        width: Math.min(width / 2, height * 0.275),
+        height: Math.min(width / 2, height * 0.275),
+        borderRadius: Math.min(width / 2, height * 0.275),
+    },
+    avatarSm: {
+        width: 70,
+        height: 70,
+        borderRadius: 70,
     },
     header: {
         width: '100%',
@@ -114,9 +119,10 @@ const CustomStyle = StyleSheet.create({
     },
     hr: {
         width: '100%',
-        height: 3,
-        backgroundColor: COLOR.BG_GRAY,
+        height: 4,
+        backgroundColor: "rgba(0, 0, 0, 0.1)",
         marginTop: 2,
+        borderRadius: 3,
     },
     map: {
         ...StyleSheet.absoluteFillObject,
@@ -135,6 +141,11 @@ const CustomStyle = StyleSheet.create({
     mapSearchIcon: {
         width: SIZE.APP_ICON_SIZE,
         height: SIZE.APP_ICON_SIZE,
+    },
+    buttonPrimary: {
+        borderColor: COLOR.APP,
+        borderRadius: SIZE.BUTTON_RADIUS,
+        minWidth: SIZE.BUTTON_MIN_SIZE,
     },
 
 });

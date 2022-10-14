@@ -37,8 +37,16 @@ export const ROUTE_FORGOT_PASSWORD = "ForgotPassword";
 export const ROUTE_RESET_PASSWORD = "ResetPassword";
 export const ROUTE_UPDATE_PASSWORD = "UpdatePassword";
 
+export const ROUTE_LOCATION_ENABLE = "LocationEnable";
 export const ROUTE_HOME = "Home";
 export const ROUTE_MAP = "Map";
+export const ROUTE_ON_MY_ROUTE = "OnMyRoute";
+export const ROUTE_CHARGING = "Charging";
+export const ROUTE_CHARGE_HISTORY = "ChargeHistory";
+export const ROUTE_CHARGE_DETAIL = "ChargeDetail";
+export const ROUTE_NOTIFICATION = "Notification";
+export const ROUTE_PROFILE = "Profile";
+
 
 
 

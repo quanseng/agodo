@@ -16,9 +16,9 @@ import SplashScreen from "react-native-splash-screen";
 import { COLOR } from './src/utils/Constants';
 import { console_log } from './src/utils/Misc';
 
-import {
-  BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
+// import {
+//   BottomSheetModalProvider,
+// } from '@gorhom/bottom-sheet';
 
 import { enableLatestRenderer } from 'react-native-maps';
 enableLatestRenderer();
@@ -114,14 +114,11 @@ const App = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <PaperProvider theme={theme}>
-          <BottomSheetModalProvider>
             <RootSiblingParent>
               <StatusBar backgroundColor={"transparent"} translucent={true} barStyle="dark-content" />
               <RootStackNavigator />
               <Toast />
             </RootSiblingParent>
-          </BottomSheetModalProvider>
-
         </PaperProvider>
       </PersistGate>
     </Provider>

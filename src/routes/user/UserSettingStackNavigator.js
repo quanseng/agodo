@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { ROUTE_RECIPES } from '../RouteNames';
+import { ROUTE_PROFILE } from '../RouteNames';
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import ProfileScreen from '../../screens/user/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
 //const Stack = createStackNavigator();
@@ -10,16 +11,16 @@ const Stack = createNativeStackNavigator();
 export default UserSettingStackNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName={ROUTE_RECIPES}
+      initialRouteName={ROUTE_PROFILE}
     >
-      {/* <Stack.Screen
-        name={ROUTE_RECIPES}
-        component={RecipeListScreen}
+      <Stack.Screen
+        name={ROUTE_PROFILE}
+        component={ProfileScreen}
         options={{
           headerShown: false
         }}
-      /> */}
-     
+      />
+
     </Stack.Navigator>
   );
 };
