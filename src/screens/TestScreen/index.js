@@ -12,7 +12,6 @@ import logoWhite from "../../assets/images/logo_text_white.png";
 import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_SIGNIN, ROUTE_SIGNUP } from '../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../utils/Misc';
-import { isPadTablet } from "../../utils/Misc";
 import { useState } from 'react';
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import CustomStyle from '../../styles/CustomStyle';

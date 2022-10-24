@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SafeAreaView, Image, StatusBar, View, Text, ScrollView } from 'react-native';
 
 import styles from './styles';
@@ -21,74 +21,61 @@ import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
+import { showToast } from '../../../utils/Utils';
 
 const EvRegChargerScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  const [currentPosition, setCurrentPosition] = useState(1); //for stepbar
 
   const defaultFormData = {
-    state: "",
-    phone: ""
+    plug_type: "",
+    universal_plug: "",
+    address1: "",
+    address2: "",
+    address3: "",
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
   const onChangeFormField = (field_name, field_value) => {
-    //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
-
     console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+  const validateFields = () => {
+    if (formData['plug_type'] === "") {
+      showToast({ message: "Please enter plug type" })
+      return false
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
+    if (formData['universal_plug'] === "") {
+      showToast({ message: "Please enter universal plug" })
+      return false
     }
-    setErrorField([...errorList]);
-    return errorList
+    if (formData['address1'] === "") {
+      showToast({ message: "Please enter adress Line 1" })
+      return false
+    } 
+    return true;
   }
-
   const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_CREDIT_CARD)
+    const isValid = validateFields()
+    if(isValid) {
+      dispatch(setPageData({ signupData: {...signupData, ...formData} }));
+      navigation.navigate(ROUTE_EV_REG_CREDIT_CARD)
+    }
   }
-  const [currentPosition, setCurrentPosition] = useState(1);
-
-  const genderList = [
-    {
-      label: "Male",
-      value: "male",
-    },
-    {
-      label: "Female",
-      value: "female",
-    },
-    {
-      label: "Others",
-      value: "others",
-    },
-
-  ];
-  const [gender, setGender] = useState("");
-
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -118,57 +105,56 @@ const EvRegChargerScreen = (props) => {
                     <MyTextInput
                       label={`Plug Type`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['plug_type']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                     
+                      onChangeText={text => onChangeFormField("plug_type", text)}
                     />
                   </View>
                   <View style={[CustomStyle.formControl]}>
-                    <MyDropdown
+                    <MyTextInput
                       label={`Universal Plug`}
-                      mode={"flat"}
-                      value={gender}
-                      setValue={setGender}
-                      list={genderList}                     
+                      placeholder={``}
+                      value={formData['universal_plug']}
+                      returnKeyType="next"
+                      keyboardType="default"
+                      onChangeText={text => onChangeFormField("universal_plug", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Adress Line 1`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['address1']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                     
+                      onChangeText={text => onChangeFormField("address1", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Adress Line 2`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['address2']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                     
+                      onChangeText={text => onChangeFormField("address2", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Adress Line 3`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['address3']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                     
+                      onChangeText={text => onChangeFormField("address3", text)}
                     />
                   </View>
-                 
-                   
                 </View>
               </View>
 
-              <View style={[AuthStyle.authFormFooter]}>                 
+              <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
                     NEXT

@@ -1,11 +1,9 @@
 import moment from 'moment';
 import { Platform, Dimensions, StatusBar } from "react-native";
-import { isPadTablet } from './Misc';
-
 const { width, height } = Dimensions.get("window");
 
 export const Config = {
-  SERVER_API_URL: "https://www.fluidformpilates.com/wp-json",
+  SERVER_API_URL: "http://192.168.0.72:8088",
   SERVER_SOCKET_URL: "http://localhost:8088",
   TERMS_AND_CONDITION_URL:
     "https://www.fluidformpilates.com/terms/",
@@ -42,6 +40,9 @@ export const SIZE = {
 export const IMAGE_RATIO_16X9 = 0.5625	//FOR 16:9
 export const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
- 
+export const USER_TYPE = {
+   USER: 'user',
+   EV: 'ev'
+}
 
  

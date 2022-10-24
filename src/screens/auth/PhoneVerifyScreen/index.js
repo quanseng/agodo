@@ -1,69 +1,95 @@
-import React, { useState } from 'react';
-import { SafeAreaView, Image, StatusBar, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 
-import styles from './styles';
-import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, isEmpty, showNotification, showToast } from '../../../utils/Misc';
-import MyTextInput from '../../../components/MyTextInput';
-import DropDown from 'react-native-paper-dropdown';
-import { PaperSelect } from 'react-native-paper-select';
+import { console_log, empty } from '../../../utils/Misc';
 
-import { COLOR } from '../../../utils/Constants';
-import MyDropdown from '../../../components/MyDropdown';
-import { TextInput } from 'react-native-paper';
-import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
-import TextInputMask from 'react-native-text-input-mask';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import MyCodeField from '../../../components/MyCodeField';
 import { ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE } from '../../../routes/RouteNames';
 import AuthStyle from '../../../styles/AuthStyle';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkApiIsLoading, endApiLoading, showToast, startApiLoading } from '../../../utils/Utils';
+import { apiCheckPhone, apiCheckSMSCode, apiResponseIsSuccess } from '../../../utils/API';
+import { Indicator } from '../../../components/Indicator';
 
 const PhoneVerifyScreen = (props) => {
   const { navigation } = props;
-  const defaultFormData = {
-    state: "",
-    phone: ""
-  }
-  const requiredFieldList = ["state", "phone"]
-  const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
- 
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
-    }
-    setErrorField([...errorList]);
-    return errorList
-  }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
 
+  const pageData = useSelector(state => state.data.pageData);
+  const formData = pageData['signupData']
   const [value, setValue] = useState('');
+
+  const sendSMS = async () => {
+    const apiKey = "apiCheckPhone";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false
+    }
+    let apiRes = false;
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    const payload = { phone: formData['phone'] }
+    const response = await apiCheckPhone(payload);
+    console_log('response::::', response)
+    if (apiResponseIsSuccess(response)) {
+      apiRes = response.message
+    } else {
+      showToast({ message: response.message })
+    }
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    return apiRes
+  }
 
   const onPressEditPhone = () => {
     navigation.navigate(ROUTE_SIGNUP);
   }
 
-  const onPressResendCode = () => {
-    console_log("resend code value::::", value)
-    //showToast({message: "Resend code"})
+  const onPressResendCode = async () => {
+    const apiRes = await sendSMS();
+    if (apiRes) {
+      showToast({ message: apiRes })
+    }
+  }
+  const onPressNext = async () => {
+    if (!empty(value)) {
+      const apiRes = await checkSMSCode()
+      if (apiRes) {
+        navigation.navigate(ROUTE_SIGNUP_TYPE);
+      }
+    }
   }
 
-  const onPressNext = () => {
-    console_log("value::::", value)
-    //showNotification({text1:"Errorrrrrrrrrrrr"});
-    navigation.navigate(ROUTE_SIGNUP_TYPE);
+  const checkSMSCode = async () => {
+    const apiKey = "apiCheckSMSCode";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false
+    }
+    let apiRes = false;
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    const payload = {
+      phone: formData['phone'],
+      code: value,
+    }
+    const response = await apiCheckSMSCode(payload);
+    console_log('response::::', response)
+    if (apiResponseIsSuccess(response)) {
+      apiRes = true
+      //showToast({ message: response.message })
+    } else {
+      showToast({ message: response.message })
+    }
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    return apiRes
   }
 
   return (
@@ -73,12 +99,12 @@ const PhoneVerifyScreen = (props) => {
           headerType="2"
         />
         <View style={[BaseStyle.flex]}>
-        <View style={[BaseStyle.flex, AuthStyle.authFormContainer]}>
+          <View style={[BaseStyle.flex, AuthStyle.authFormContainer]}>
             <View style={[AuthStyle.authFormWrapper]}>
               <View>
                 <View style={[AuthStyle.authFormHeader]}>
                   <Text style={[BaseStyle.textLg1, BaseStyle.textBold, BaseStyle.textPrimary]}>Enter your code</Text>
-                  <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Please enter the 4-digit code  that was sent to you at +880 023 245 2860.</Text>
+                  <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Please enter the 4-digit code  that was sent to you at {formData['phone']}.</Text>
                   <TouchableOpacity style={[BaseStyle.mt2]} onPress={() => { onPressEditPhone() }}>
                     <Text style={[BaseStyle.textSm, BaseStyle.textWarning]}>Edit my mobile number</Text>
                   </TouchableOpacity>
@@ -98,7 +124,7 @@ const PhoneVerifyScreen = (props) => {
                 </View>
               </View>
 
-              <View style={[AuthStyle.authFormFooter]}>                 
+              <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
                     NEXT
@@ -109,6 +135,7 @@ const PhoneVerifyScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }

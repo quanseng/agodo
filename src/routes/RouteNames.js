@@ -29,6 +29,9 @@ export const ROUTE_EV_REG_CHARGER = "EvRegCharger";
 export const ROUTE_EV_REG_CREDIT_CARD = "EvRegCreditCard";
 export const ROUTE_EV_REG_VEHICLE = "EvRegVehicle";
 export const ROUTE_RG_REG_PAYMENT = "RgRegPayment";
+
+export const ROUTE_USER_REG_PERSONAL = "UserRegPersonal";
+
 export const ROUTE_TERMS_CONDITION = "TermsCondition";
 export const ROUTE_WELCOME = "Welcome";
 
@@ -47,29 +50,4 @@ export const ROUTE_CHARGE_DETAIL = "ChargeDetail";
 export const ROUTE_NOTIFICATION = "Notification";
 export const ROUTE_PROFILE = "Profile";
 
-
-
-
-export const ROUTE_SUBSCRIPTIONS = "Subscriptions";
 export const ROUTE_DASHBOARD = "Dashboard";
-export const ROUTE_PERSONAL_PROGRAM = "PersonalProgram";
-
-export const ROUTE_WORKOUTS = "Workouts";
-export const ROUTE_WORKOUT_DETAIL = "WorkoutDetail";
-
-export const ROUTE_CHALLENGES = "Challenges";
-export const ROUTE_CHALLENGE_DETAIL = "ChallengeDetail";
-
-export const ROUTE_RECIPES = "Recipes";
-export const ROUTE_RECIPE_DETAIL = "RecipeDetail";
-
-export const ROUTE_MY_FAVORITES = "MyFavorites";
-export const ROUTE_MY_FAVORITE_WORKOUT_DETAIL = "MyFavoriteWorkoutDetail";
-export const ROUTE_MY_FAVORITE_CHALLENGE_DETAIL = "MyFavoriteChallengeDetail";
-export const ROUTE_MY_FAVORITE_RECIPE_DETAIL = "MyFavoriteRecipeDetail";
-export const ROUTE_MY_FAVORITE_NUTRITION_DETAIL = "MyFavoriteNutritionChallengeDetail";
-
-export const ROUTE_NUTRITION_CHALLENGES = "NutritionChallenges";
-export const ROUTE_NUTRITION_CHALLENGE_DETAIL = "NutritionChallengeDetail";
-
-export const ROUTE_SAVED_VIDEOS = "SavedVideos";

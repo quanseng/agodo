@@ -1,6 +1,5 @@
 import { Dimensions } from 'react-native';
 import { Platform } from 'react-native'
-import { isTablet } from 'react-native-device-info';
 import Notification from 'react-native-toast-message';
 import Toast from 'react-native-root-toast';
 
@@ -9,35 +8,7 @@ export const console_log = (...log_data) => {
   console.log(...log_data)
 };
 
-export const isPadTablet = () => {
-  // const state = store.getState();
-  // const dispatch = useDispatch()
 
-  // console_log("state:::", state)
-
-  if (Platform.OS === 'ios') { //ios
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
-    const ratio = windowHeight / windowWidth;
-    //console_log("ratio:::", ratio)
-
-    if (ratio <= 1.6) {
-      //console_log("deviceType:::::::::::::::::: iPad")
-      return true; //ipad
-    } else {
-      //console_log("deviceType:::::::::::::::::: iphone")
-      return false; //iphone
-    }
-  } else { //android
-    if (isTablet()) {
-      //console_log("deviceType:::::::::::::::::: tablet")
-      return true; // tablet
-    } else {
-      //console_log("deviceType:::::::::::::::::: android phone")
-      return false; //android phone
-    }
-  }
-};
 
 export const is_null = (value) => {
   if (value === undefined || value === null) {
@@ -113,59 +84,17 @@ export const validatePhone = (str) => {
     /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(str);
   return isphone;
 };
-export const showNotification = (option = null) => { //show notification something like push notification
-  let toastOption = {
-    type: 'success',
-    text1: 'Test'
-  }
-  if (option !== null) {
-    toastOption = { ...toastOption, ...option }
-  }
-  Notification.show(toastOption);
+export const trim_phone = (num) => {
+  num = num.replace(/\+/g, '');
+  num = num.replace(/-/g, '');
+  num = num.replace(/_/g, '');
+  num = num.replace(/\(/g, '');
+  num = num.replace(/\)/g, '');
+  num = num.replace(' ', '');
+  num = num.replace(/ /g, '');
+  return num;
 }
-export const showToast = (option = null) => { //show toast something like native toast
-  let toastOption = {
-    message: '',
-    duration: Toast.durations.LONG
-  }
-  if (option !== null) {
-    toastOption = { ...toastOption, ...option }
-  }
 
-  if(toastOption.message === ""){
-    return false;
-  }
-
-  // Add a Toast on screen.
-  let toast = Toast.show(toastOption.message, {
-    duration: toastOption.duration,// Toast.durations.LONG,
-    position: Toast.positions.BOTTOM,
-    shadow: true,
-    animation: true,
-    hideOnPress: true,
-    delay: 0,
-    //opacity: 0.75,
-    onShow: () => {
-      // calls on toast\`s appear animation start
-    },
-    onShown: () => {
-      // calls on toast\`s appear animation end.
-    },
-    onHide: () => {
-      // calls on toast\`s hide animation start.
-    },
-    onHidden: () => {
-      // calls on toast\`s hide animation end.
-    }
-  });
-
-  // You can manually hide the Toast, or it will automatically disappear after a `duration` ms timeout.
-  // setTimeout(function () {
-  //   Toast.hide(toast);
-  // }, toastOption.duration);
-
-  return toast;
-}
 export const joinMultiAssocArrayValue = (item_list, key_name = "name", spliter = ", ") => {
   let arr = []
   if (item_list && item_list.length > 0) {

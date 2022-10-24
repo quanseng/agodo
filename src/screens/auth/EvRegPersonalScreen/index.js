@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SafeAreaView, Image, StatusBar, View, Text, ScrollView } from 'react-native';
 
 import styles from './styles';
 import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, isEmpty } from '../../../utils/Misc';
+import { console_log, isEmpty, validateEmail } from '../../../utils/Misc';
 import MyTextInput from '../../../components/MyTextInput';
 import DropDown from 'react-native-paper-dropdown';
 import { PaperSelect } from 'react-native-paper-select';
@@ -21,56 +21,67 @@ import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
+import { useDispatch, useSelector } from 'react-redux';
+import { showToast } from '../../../utils/Utils';
+import { setPageData } from '../../../redux/data/actions';
 
 const EvRegPersonalScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  const [currentPosition, setCurrentPosition] = useState(0); //for stepbar
 
   const defaultFormData = {
-    state: "",
-    phone: ""
+    first_name: "",
+    last_name: "",
+    email: "",
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
   const onChangeFormField = (field_name, field_value) => {
-    //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
-
     console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+
+  const validateFields = () => {
+    if (formData['first_name'] === "") {
+      showToast({ message: "Please enter your first name" })
+      return false
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
+    if (formData['last_name'] === "") {
+      showToast({ message: "Please enter your last name" })
+      return false
+    }
+    if (formData['email'] === "") {
+      showToast({ message: "Please enter your email" })
+      return false
+    }else{
+      if(!validateEmail(formData['email'])) {
+        showToast({ message: "Please enter a valid email" })
+        return false
       }
     }
-    setErrorField([...errorList]);
-    return errorList
+    return true;
   }
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_ID)
+    const isValid = validateFields()
+    if(isValid) {
+      dispatch(setPageData({ signupData: {...signupData, ...formData} }));
+      navigation.navigate(ROUTE_EV_REG_ID)
+    }
   }
-  const [currentPosition, setCurrentPosition] = useState(0);
+  
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -100,10 +111,10 @@ const EvRegPersonalScreen = (props) => {
                     <MyTextInput
                       label={`First Name`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['first_name']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}
+                      onChangeText={text => onChangeFormField("first_name", text)}
                       left={<TextInput.Icon icon={({ size, color }) => (
                         <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       )} />}
@@ -113,10 +124,10 @@ const EvRegPersonalScreen = (props) => {
                     <MyTextInput
                       label={`Last Name`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['last_name']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}
+                      onChangeText={text => onChangeFormField("last_name", text)}
                       left={<TextInput.Icon icon={({ size, color }) => (
                         <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       )} />}
@@ -126,10 +137,10 @@ const EvRegPersonalScreen = (props) => {
                     <MyTextInput
                       label={`Email`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['email']}
                       returnKeyType="next"
                       keyboardType="email-address"
-                      onChangeText={text => onChangeFormField("phone", text)}
+                      onChangeText={text => onChangeFormField("email", text)}
                       left={<TextInput.Icon icon={({ size, color }) => (
                         <Image source={require('../../../assets/images/icons/envelope.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       )} />}

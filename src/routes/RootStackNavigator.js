@@ -43,7 +43,7 @@ const RootStackNavigator = () => {
   return (
     <NavigationContainer theme={WhiteTheme}>
       <Stack.Navigator
-        initialRouteName={ROUTE_USER_TAB_NAVIGATOR} //ROUTE_TEST, ROUTE_TEST1, ROUTE_USER_TAB_NAVIGATOR, ROUTE_INTRODUCTION
+        initialRouteName={ROUTE_INTRODUCTION} //ROUTE_TEST, ROUTE_TEST1, ROUTE_USER_TAB_NAVIGATOR, ROUTE_INTRODUCTION
         screenOptions={{
           presentation: "card", //modal, card, transparentModal
           headerMode: "screen",
@@ -61,7 +61,6 @@ const RootStackNavigator = () => {
             </TouchableOpacity>
           ),
         }}
-
       >
         <Stack.Screen
           name={ROUTE_TEST}

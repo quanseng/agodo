@@ -1,53 +1,43 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { SafeAreaView, Image, StatusBar, View, Text, ScrollView, PermissionsAndroid, TouchableOpacity } from 'react-native';
-import { check, request, requestMultiple, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { requestMultiple, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
-import styles from './styles';
-import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, empty, isEmpty, showToast } from '../../../utils/Misc';
-import { showCarema, showImageLibrary } from '../../../utils/Utils';
+import { console_log, empty } from '../../../utils/Misc';
+import { showCarema, showImageLibrary, showToast } from '../../../utils/Utils';
 
-import MyTextInput from '../../../components/MyTextInput';
-import DropDown from 'react-native-paper-dropdown';
-import { PaperSelect } from 'react-native-paper-select';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { COLOR } from '../../../utils/Constants';
-import MyDropdown from '../../../components/MyDropdown';
-import { TextInput } from 'react-native-paper';
-import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
-import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_CHARGER, ROUTE_PHONE_VERIFY } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_CHARGER } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
-import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import MyUploadBox from '../../../components/MyUploadBox';
 import MyImageSourceModal from '../../../components/MyImageSourceModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
 
 const EvRegIdScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
-
-  const [currentPosition, setCurrentPosition] = useState(0);
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  const [currentPosition, setCurrentPosition] = useState(0); //for stepbar
   const [imageSide, setImageSide] = useState("front");
   
   const defaultFormData = {
     front: null,
     back: null
   }
-  const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
-  
+  const [formData, setFormData] = useState(defaultFormData);  
   const onChangeFormField = (field_value) => {
     if(empty(field_value)) {
       return false;
@@ -74,14 +64,6 @@ const EvRegIdScreen = (props) => {
       return false
     }
     return true
-  }
-
-  const onPressNext = async () => {
-    const isValid = validateFields()
-    if(!isValid) {
-      return false
-    }
-    navigation.navigate(ROUTE_EV_REG_CHARGER)
   }
 
   const renderPlaceholder = (side_type) => {
@@ -141,6 +123,16 @@ const EvRegIdScreen = (props) => {
     }
     onChangeFormField(uploadResult)
   }
+
+  const onPressNext = async () => {
+    const isValid = validateFields()
+    if(!isValid) {
+      return false
+    }
+    dispatch(setPageData({ signupData: {...signupData, ...formData} }));
+    navigation.navigate(ROUTE_EV_REG_CHARGER)
+  }
+
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -203,7 +195,6 @@ const EvRegIdScreen = (props) => {
                       )
                     }
                   </View>
-
                 </View>
               </View>
 

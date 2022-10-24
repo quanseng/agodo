@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SafeAreaView, Image, StatusBar, View, Text, ScrollView } from 'react-native';
 
 import styles from './styles';
@@ -22,18 +22,23 @@ import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import { CreditCardInput, LiteCreditCardInput, MyCreditCardInput } from "../../../components/MyCreditCardForm/src";
+import { useDispatch, useSelector } from 'react-redux';
 
 const EvRegCreditCardScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
-
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  const [currentPosition, setCurrentPosition] = useState(2); //for stepbar
+ 
   const defaultFormData = {
     state: "",
     phone: ""
@@ -71,7 +76,6 @@ const EvRegCreditCardScreen = (props) => {
   const onPressNext = () => {
     navigation.navigate(ROUTE_EV_REG_VEHICLE)
   }
-  const [currentPosition, setCurrentPosition] = useState(2);
 
   const onFocusCardField = (field)=>{
     console_log("field::::", field)
@@ -125,9 +129,7 @@ const EvRegCreditCardScreen = (props) => {
                       keyboardType="default"
                       onChangeText={text => onChangeFormField("phone", text)}                    
                     />
-                  </View>
-                  
-                   
+                  </View>                   
                 </View>
               </View>
 

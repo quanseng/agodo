@@ -5,7 +5,6 @@ import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODU
 
 import styles from './styles';
 import BaseStyle from '../../styles/BaseStyle';
-import { setAppMainStatusBarStyle } from '../../utils/Utils';
 import { console_log } from '../../utils/Misc';
 import { SafeAreaView } from 'react-navigation';
 
@@ -15,7 +14,6 @@ const SplashScreen = (props) => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    //setAppMainStatusBarStyle(StatusBar)
     //gotoIntroScreen();
   }, []);
 

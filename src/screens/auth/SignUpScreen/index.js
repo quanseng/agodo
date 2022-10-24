@@ -1,92 +1,158 @@
-import React, { useState } from 'react';
-import { SafeAreaView, Image, StatusBar, View, Text, ScrollView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { SafeAreaView, StatusBar, Keyboard, View, Text, ScrollView } from 'react-native';
 
-import styles from './styles';
 import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, isEmpty } from '../../../utils/Misc';
+import { addItemToArray, console_log, empty, isEmpty, removeItemFromArray, trim_phone } from '../../../utils/Misc';
 import MyTextInput from '../../../components/MyTextInput';
-import DropDown from 'react-native-paper-dropdown';
-import { PaperSelect } from 'react-native-paper-select';
-
-import { COLOR } from '../../../utils/Constants';
-import MyDropdown from '../../../components/MyDropdown';
-import { TextInput } from 'react-native-paper';
-import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
 import { ROUTE_PHONE_VERIFY } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import AuthStyle from '../../../styles/AuthStyle';
+import { apiCheckPhone, apiGetAllStates, apiResponseIsSuccess } from '../../../utils/API';
+
+import MyStateDropdown from '../../../components/MyStateDropdown';
+import { Indicator } from '../../../components/Indicator';
+import { setDarkStatusBarStyle, showToast } from '../../../utils/Utils';
+import { useDispatch } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
 
 const SignUpScreen = (props) => {
   const { navigation } = props;
+  const dispatch = useDispatch();
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setDarkStatusBarStyle(StatusBar)
     }, [])
-  );
+  )
+
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  const checkLoading = (loadingList = null) => {
+    let curLoadingList = [...STATIC_VALUES.current['apiLoadingList']]
+    if (loadingList !== null) {
+      curLoadingList = loadingList
+    }
+    const isLoading = (!empty(curLoadingList) && curLoadingList.length > 0)
+    setLoading(isLoading)
+    return isLoading
+  }
+  const startApiLoading = (apiKey) => {
+    const newApiLoadingList = addItemToArray([...STATIC_VALUES.current['apiLoadingList']], apiKey)
+    STATIC_VALUES.current['apiLoadingList'] = (newApiLoadingList)
+    checkLoading(newApiLoadingList)
+  }
+  const endApiLoading = (apiKey) => {
+    const newApiLoadingList = removeItemFromArray([...STATIC_VALUES.current['apiLoadingList']], apiKey)
+    STATIC_VALUES.current['apiLoadingList'] = (newApiLoadingList)
+    checkLoading(newApiLoadingList)
+  }
+  const checkApiIsLoading = (apiKey) => {
+    if (!STATIC_VALUES.current['apiLoadingList'].includes(apiKey)) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+
+  useEffect(() => {
+    loadScreenData();
+  }, []);
+
+  const loadScreenData = async () => {
+    const apiKey = "apiGetAllStates";
+    if (checkApiIsLoading(apiKey)) {
+      return false;
+    }
+    startApiLoading(apiKey);
+    const response = await apiGetAllStates();
+    if (apiResponseIsSuccess(response)) {
+      initStateList(response.data.state_list)
+    } else {
+      showToast({ message: response.message })
+    }
+    endApiLoading(apiKey)
+  }
+  const [stateList, setStateList] = useState([]) //const stateList = ["Egypt", "Canada", "Australia", "Ireland"]
+
+  const initStateList = (state_list) => {
+    let arr1 = []
+    for (let k in state_list) {
+      const row = state_list[k]
+      arr1.push(row.name)
+    }
+    setStateList(arr1)
+  }
 
   const defaultFormData = {
     state: "",
     phone: ""
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
   const onChangeFormField = (field_name, field_value) => {
-    //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
-
-    console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+  const validateFields = () => {
+    const state = formData['state']
+    if (state === "") {
+      showToast({ message: "Please select your State" })
+      return false
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
+    const phone = trim_phone(formData['phone'])
+    if (phone.length < 10) {
+      showToast({ message: "Please enter a valid phone number" })
+      return false
+    }
+    return true;
+  }
+  const onChangeState = (field_value) => {
+    const updatedData = { ...formData }
+    updatedData['state'] = field_value
+    setFormData(updatedData)
+  }
+
+  const onPressNext = async () => {
+    Keyboard.dismiss();
+    const isValid = validateFields()
+    if (isValid) {
+      dispatch(setPageData({ signupData: formData }));
+      const apiRes = await sendSMS();
+      if (apiRes) {
+        navigation.navigate(ROUTE_PHONE_VERIFY)
       }
+    }
+  }
+
+  const sendSMS = async () => {
+    const apiKey = "apiCheckPhone";
+    if (checkApiIsLoading(apiKey)) {
+      return false
+    }
+    let apiRes = false;
+    startApiLoading(apiKey);
+    const payload = { phone: formData['phone'] }
+    const response = await apiCheckPhone(payload);
+    if (apiResponseIsSuccess(response)) {
+      apiRes = true
     } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
+      showToast({ message: response.message })
     }
-    setErrorField([...errorList]);
-    return errorList
+    endApiLoading(apiKey)
+    return apiRes
   }
 
 
-  const [showDropDown, setShowDropDown] = useState(false);
-  const genderList = [
-    {
-      label: "Male",
-      value: "male",
-    },
-    {
-      label: "Female",
-      value: "female",
-    },
-    {
-      label: "Others",
-      value: "others",
-    },
-
-  ];
-  const [gender, setGender] = useState("");
-
-  const onPressNext = () => {
-    navigation.navigate(ROUTE_PHONE_VERIFY)
-  }
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -103,17 +169,23 @@ const SignUpScreen = (props) => {
                 </View>
                 <View style={[AuthStyle.authFormBody]}>
                   <View style={[CustomStyle.formControl]}>
-                    <MyDropdown
+                    {/* <MyDropdown
                       label={`Select your State`}
                       mode={"flat"}
-                      value={gender}
-                      setValue={setGender}
-                      list={genderList}
+                      value={formData['state']}
+                      setValue={onChangeState}
+                      list={stateList}
                       inputProps={{
                         left: (<TextInput.Icon icon={({ size, color }) => (
                           <Image source={require('../../../assets/images/flag/flag_us.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                         )} />)
                       }}
+                    /> */}
+                  </View>
+                  <View style={CustomStyle.formControl}>
+                    <MyStateDropdown
+                      dataList={stateList}
+                      onSelect={(e) => onChangeState(e)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
@@ -124,6 +196,7 @@ const SignUpScreen = (props) => {
                       returnKeyType="next"
                       keyboardType="phone-pad"
                       onChangeText={text => onChangeFormField("phone", text)}
+                      onSubmitEditing={() => onPressNext()}
                       // left={<TextInput.Icon icon={({ size, color }) => (
                       //   <Image source={require('../../../assets/images/flag/flag_us.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       // )} />}
@@ -155,6 +228,7 @@ const SignUpScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }

@@ -1,85 +1,55 @@
-import React, { useState } from 'react';
-import { SafeAreaView, Image, StatusBar, View, Text, ScrollView, TouchableOpacity, Pressable } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, Image, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 
 import styles from './styles';
-import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, isEmpty, showNotification, showToast } from '../../../utils/Misc';
-import MyTextInput from '../../../components/MyTextInput';
-import DropDown from 'react-native-paper-dropdown';
-import { PaperSelect } from 'react-native-paper-select';
-
-import { COLOR } from '../../../utils/Constants';
-import MyDropdown from '../../../components/MyDropdown';
-import { TextInput } from 'react-native-paper';
-import { Button } from 'react-native-paper';
+import { USER_TYPE } from '../../../utils/Constants';
 import MyButton from '../../../components/MyButton';
-import TextInputMask from 'react-native-text-input-mask';
 import MyScreenHeader from '../../../components/MyScreenHeader';
-import MyCodeField from '../../../components/MyCodeField';
-import { ROUTE_EV_REG_PERSONAL, ROUTE_SIGNUP } from '../../../routes/RouteNames';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { ROUTE_EV_REG_PERSONAL, ROUTE_USER_REG_PERSONAL } from '../../../routes/RouteNames';
 import AuthStyle from '../../../styles/AuthStyle';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
 
 const SignupTypeScreen = (props) => {
   const { navigation } = props;
-  const defaultFormData = {
-    state: "",
-    phone: ""
-  }
-  const requiredFieldList = ["state", "phone"]
-  const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
-
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
-    }
-    setErrorField([...errorList]);
-    return errorList
-  }
-
-  const [value, setValue] = useState('');
-
-  const onPressEditPhone = () => {
-    //navigation.navigate();
-  }
-
-  const onPressResendCode = () => {
-    console_log("resend code value::::", value)
-    //showToast({ message: "Resend code" })
-  }
-
-  const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_PERSONAL);
-  }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const formData = pageData['signupData']
 
   const userTypeItemList = [
     {
-      id: "user",
+      id: USER_TYPE.USER,
       image: require('../../../assets/images/button_icons/car.png'),
       text: "Regular User"
     },
     {
-      id: "ev",
+      id: USER_TYPE.EV,
       image: require('../../../assets/images/button_icons/ev.png'),
       text: "EV Source"
     }
   ];
-  const [currentUserType, setCurrentUserType] = useState("user");
+  const [currentUserType, setCurrentUserType] = useState(USER_TYPE.USER);
   const onPressUserType = (val) => {
     setCurrentUserType(val)
+  }
+
+  const onPressNext = () => {
+    dispatch(setPageData({ signupData: {...formData, user_type: currentUserType} }));
+    if(currentUserType === USER_TYPE.USER) {
+      navigation.navigate(ROUTE_USER_REG_PERSONAL);
+    }else{
+      navigation.navigate(ROUTE_EV_REG_PERSONAL);
+    }
   }
 
   return (
@@ -89,7 +59,7 @@ const SignupTypeScreen = (props) => {
           headerType="2"
         />
         <View style={[BaseStyle.flex]}>
-        <View style={[BaseStyle.flex, AuthStyle.authFormContainer]}>
+          <View style={[BaseStyle.flex, AuthStyle.authFormContainer]}>
             <View style={[AuthStyle.authFormWrapper]}>
               <View style={[AuthStyle.authFormHeader]}>
                 <Text style={[BaseStyle.textLg1, BaseStyle.textBold, BaseStyle.textPrimary]}>Continue as</Text>
@@ -112,14 +82,32 @@ const SignupTypeScreen = (props) => {
               </View>
 
               <View style={[AuthStyle.authFormFooter]}>
-                <View style={styles.userTypeDescBox}>
-                  <Image source={require('../../../assets/images/data/charging-station.png')} style={[styles.userTypeDescImage]} alt="desc" resizeMode="cover" />
-                  <View style={[CustomStyle.formControl]}>
-                    <Text style={[BaseStyle.textXs, BaseStyle.textGray]}>
-                      Hint: Users can register as either Regular User or EV Charging Source. EV Charging Source account can make revenue by allowing Regular users to charge their vehicles at their homes.
-                    </Text>
-                  </View>
-                </View>
+                {
+                  (currentUserType === USER_TYPE.USER) ? (
+                    <>
+                      <View style={styles.userTypeDescBox}>
+                        <Image source={require('../../../assets/images/data/charging-station.png')} style={[styles.userTypeDescImage]} alt="desc" resizeMode="cover" />
+                        <View style={[CustomStyle.formControl]}>
+                          <Text style={[BaseStyle.textXs, BaseStyle.textGray]}>
+                            <Text style={[BaseStyle.textWarning]}>Hint:</Text> Users can register as either <Text style={[BaseStyle.textPrimary]}>Regular User or EV Charging Source</Text>. EV Charging Source account can make revenue by allowing Regular users to charge their vehicles at their homes.
+                          </Text>
+                        </View>
+                      </View>
+                    </>
+                  ) : (
+                    <>
+                      <View style={styles.userTypeDescBox}>
+                        <Image source={require('../../../assets/images/data/electric-charger.png')} style={[styles.userTypeDescImage]} alt="desc" resizeMode="cover" />
+                        <View style={[CustomStyle.formControl]}>
+                          <Text style={[BaseStyle.textXs, BaseStyle.textGray]}>
+                            <Text style={[BaseStyle.textWarning]}>Hint:</Text> Users can register as either <Text style={[BaseStyle.textPrimary]}>Regular User or EV Charging Source</Text>. EV Charging Source account can make revenue by allowing Regular users to charge their vehicles at their homes.
+                          </Text>
+                        </View>
+                      </View>
+                    </>
+                  )
+                }
+
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
                     NEXT
@@ -130,6 +118,7 @@ const SignupTypeScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }
