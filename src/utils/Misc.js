@@ -1,14 +1,10 @@
 import { Dimensions } from 'react-native';
 import { Platform } from 'react-native'
-import Notification from 'react-native-toast-message';
-import Toast from 'react-native-root-toast';
 
 export const console_log = (...log_data) => {
   //return false;
   console.log(...log_data)
 };
-
-
 
 export const is_null = (value) => {
   if (value === undefined || value === null) {

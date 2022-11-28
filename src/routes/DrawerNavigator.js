@@ -8,7 +8,7 @@ import { Dimensions,TouchableOpacity,Image } from 'react-native';
 import { ROUTE_DASHBOARD_TAB, ROUTE_HIDDEN_TAB, ROUTE_USER_TAB_NAVIGATOR } from './RouteNames';
 import UserHiddenStackNavigator from './user/UserHiddenStackNavigator';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDrawerContentType } from '../redux/config/actions';
+//import { setDrawerContentType } from '../redux/config/actions';
 import { createStackNavigator } from '@react-navigation/stack';
 import styles from './styles';
 
@@ -23,7 +23,7 @@ const DrawerStackNavigator = () => {
   const dispatch = useDispatch();
 
   const onClickShowMenuDrawer = () => {
-    dispatch(setDrawerContentType("menu"));
+   //dispatch(setDrawerContentType("menu"));
     navigation.dispatch(DrawerActions.openDrawer())
   }
 

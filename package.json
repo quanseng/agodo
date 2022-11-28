@@ -35,7 +35,7 @@
     "react-native-paper-select": "^0.3.6",
     "react-native-permissions": "^3.6.1",
     "react-native-raw-bottom-sheet": "^2.2.0",
-    "react-native-reanimated": "^3.0.0-rc.0",
+    "react-native-reanimated": "^2.13.0",
     "react-native-responsive-image-view": "^2.1.0",
     "react-native-root-toast": "^3.4.0",
     "react-native-safe-area-context": "^4.3.4",
