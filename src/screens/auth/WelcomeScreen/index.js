@@ -1,45 +1,40 @@
 import React, { useRef } from 'react';
+import { NavigationActions, StackActions } from 'react-navigation';
 import { ImageBackground, Image, StatusBar, View, Text } from 'react-native';
 
 import styles from './styles';
-import { ROUTE_SIGNUP } from '../../../routes/RouteNames';
+import { ROUTE_HOME, ROUTE_SIGNUP } from '../../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../../utils/Misc';
 import { useState } from 'react';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
 import MyButton from '../../../components/MyButton';
+import { setLightStatusBarStyle } from '../../../utils/Utils';
+import { useSelector } from 'react-redux';
 
 const WelcomeScreen = (props) => {
   const { navigation } = props;
 
+  const { signed, user } = useSelector(state => state.auth);
+  console_log("WelcomeScreen signed, user:::", signed, user)
+
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('light-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setLightStatusBarStyle(StatusBar)
     }, [])
   );
 
-  const sliderRef = useRef(null)
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-  const [slideTimestamp, setSlideTimestamp] = useState(0)
-
-  const onSlideChange = (index, lastIndex) => {
-    console_log("index, lastIndex:::", index, lastIndex)
-    setCurrentSlideIndex(index)
-    setSlideTimestamp(get_utc_timestamp_ms())
-  }
-
-  const gotoSignUpPage = () => {
-    console_log("gotoLoginPage::::")
-    navigation.replace(ROUTE_SIGNUP);
-  }
-
-
   const onPressNext = () => {
-    console_log("onDone::::")
-    gotoSignUpPage();
+    console_log("onPressNext::::")
+    resetAndNavigate()
+  }
+
+  const resetAndNavigate = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTE_HOME }]
+    })
   }
 
   return (

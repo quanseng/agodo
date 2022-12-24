@@ -16,15 +16,14 @@ import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import MyImageSourceModal from '../../../components/MyImageSourceModal';
 import MyBottomSheet from '../../../components/MyBottomSheet';
+import { setDarkStatusBarStyle } from '../../../utils/Utils';
 
 const MapScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setDarkStatusBarStyle(StatusBar)
     }, [])
   );
 
@@ -101,7 +100,6 @@ const MapScreen = (props) => {
                 <MySearchChargerBox
                 />
               </View>
-
 
               <View style={[styles.searchBtnBox]}>
                 <View style={[BaseStyle.rowCenter]}>

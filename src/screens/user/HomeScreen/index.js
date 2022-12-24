@@ -13,15 +13,14 @@ import { TextInput } from 'react-native-paper';
 import MyTextInput from '../../../components/MyTextInput';
 import { COLOR } from '../../../utils/Constants';
 import MySearchChargerBox from '../../../components/MySearchChargerBox';
+import { setLightStatusBarStyle } from '../../../utils/Utils';
 
 const HomeScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('light-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setLightStatusBarStyle(StatusBar)
     }, [])
   );
 

@@ -1,6 +1,13 @@
 import axios from 'axios';
-import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates } from './API_URL';
+import { Platform } from 'react-native';
+import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister } from './API_URL';
 import { console_log } from './Misc';
+
+export const MULTIPART_HEADER = {
+  headers: {
+    "Content-Type": "multipart/form-data",
+  }
+}
 
 export const API_PAGE_SIZE = 24;
 
@@ -9,10 +16,10 @@ export const API_PAGE_SIZE = 24;
 export const apiResponseIsSuccess = (response) => {
   const { status } = response;
   console_log("data.status::::", status)
-  if(status) {
-    if(status === '1') {
+  if (status) {
+    if (status === '1') {
       return true;
-    }else{
+    } else {
       return false
     }
   }
@@ -20,10 +27,10 @@ export const apiResponseIsSuccess = (response) => {
 }
 export const apiLoginRequired = (response) => {
   const { login_required } = response;
-  if(login_required) {
-    if(login_required === '1') {
+  if (login_required) {
+    if (login_required === '1') {
       return true;
-    }else{
+    } else {
       return false
     }
   }
@@ -31,7 +38,7 @@ export const apiLoginRequired = (response) => {
 }
 
 //////////////////////////////////////////////////////////////starting apis//////////////////////////////////////////////////////////////////
-export const apiGetAllStates = async (payload=null) => {
+export const apiGetAllStates = async (payload = null) => {
   //console_log("urlGetAllStates::", urlGetAllStates)
   try {
     const res = await axios.get(urlGetAllStates);
@@ -49,7 +56,7 @@ export const apiGetAllStates = async (payload=null) => {
     return error;
   }
 }
-export const apiCheckPhone = async (payload=null) => {
+export const apiCheckPhone = async (payload = null) => {
   try {
     const res = await axios.post(urlCheckPhone, payload);
     return res.data;
@@ -60,9 +67,57 @@ export const apiCheckPhone = async (payload=null) => {
     return error;
   }
 }
-export const apiCheckSMSCode = async (payload=null) => {
+export const apiCheckSMSCode = async (payload = null) => {
   try {
     const res = await axios.post(urlCheckSMSCode, payload);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}
+
+export const apiRegisterUser = async (payload = null) => {
+  try {
+    if (payload['personalData']) {
+      payload['personalData'] = JSON.stringify(payload['personalData'])
+    }
+    if (payload['evSourceData']) {
+      payload['evSourceData'] = JSON.stringify(payload['evSourceData'])
+    }
+    if (payload['paymentMethodData']) {
+      payload['paymentMethodData'] = JSON.stringify(payload['paymentMethodData'])
+    }
+    if (payload['vehicleData']) {
+      payload['vehicleData'] = JSON.stringify(payload['vehicleData'])
+    }
+    const formData = new FormData();
+    for (let k in payload) {
+      if (k !== "front" && k !== "back") {
+        formData.append(k, payload[k])
+      }
+    }
+    if(payload['front']) {
+      let selectedImage = payload['front']
+      formData.append('id_front', {
+        name: selectedImage.fileName,
+        type: selectedImage.type,
+        uri: Platform.OS === 'android' ? selectedImage.uri : selectedImage.uri.replace('file://', ''),
+      });
+    }
+
+    if(payload['back']) {
+      let selectedImage = payload['back']
+      formData.append('id_back', {
+        name: selectedImage.fileName,
+        type: selectedImage.type,
+        uri: Platform.OS === 'android' ? selectedImage.uri : selectedImage.uri.replace('file://', ''),
+      });
+    }
+
+    const res = await axios.post(urlRegister, formData, MULTIPART_HEADER);
     return res.data;
   } catch (error) {
     if (error.response) {

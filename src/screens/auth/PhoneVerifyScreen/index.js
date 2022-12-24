@@ -8,12 +8,13 @@ import { console_log, empty } from '../../../utils/Misc';
 import MyButton from '../../../components/MyButton';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import MyCodeField from '../../../components/MyCodeField';
-import { ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE } from '../../../routes/RouteNames';
+import { ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_WELCOME } from '../../../routes/RouteNames';
 import AuthStyle from '../../../styles/AuthStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { checkApiIsLoading, endApiLoading, showToast, startApiLoading } from '../../../utils/Utils';
 import { apiCheckPhone, apiCheckSMSCode, apiResponseIsSuccess } from '../../../utils/API';
 import { Indicator } from '../../../components/Indicator';
+import { signIn } from '../../../redux/auth/actions';
 
 const PhoneVerifyScreen = (props) => {
   const { navigation } = props;
@@ -63,9 +64,6 @@ const PhoneVerifyScreen = (props) => {
   const onPressNext = async () => {
     if (!empty(value)) {
       const apiRes = await checkSMSCode()
-      if (apiRes) {
-        navigation.navigate(ROUTE_SIGNUP_TYPE);
-      }
     }
   }
 
@@ -74,22 +72,35 @@ const PhoneVerifyScreen = (props) => {
     if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
       return false
     }
-    let apiRes = false;
+    let checkSuccess = false;
     startApiLoading(apiKey, STATIC_VALUES, setLoading);
     const payload = {
       phone: formData['phone'],
       code: value,
     }
     const response = await apiCheckSMSCode(payload);
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
     console_log('response::::', response)
     if (apiResponseIsSuccess(response)) {
-      apiRes = true
+      checkSuccess = true
       //showToast({ message: response.message })
+      const data = response['data']
+      const login_enabled = data['login_enabled']
+      if (login_enabled) {
+        let user = data['user']
+        dispatch(signIn(user));
+        navigation.reset({
+          index: 0,
+          routes: [{ name: ROUTE_WELCOME }]
+        })
+      } else {
+        navigation.navigate(ROUTE_SIGNUP_TYPE);
+      }
     } else {
       showToast({ message: response.message })
+      checkSuccess = false
     }
-    endApiLoading(apiKey, STATIC_VALUES, setLoading)
-    return apiRes
+    return checkSuccess
   }
 
   return (

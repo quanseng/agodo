@@ -8,7 +8,7 @@ import { console_log, empty } from '../../../utils/Misc';
 import { showCarema, showImageLibrary, showToast } from '../../../utils/Utils';
 
 import MyButton from '../../../components/MyButton';
-import { ROUTE_EV_REG_CHARGER, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_CHARGER, ROUTE_RG_REG_VEHICLE, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
@@ -17,7 +17,7 @@ import MyImageSourceModal from '../../../components/MyImageSourceModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageData } from '../../../redux/data/actions';
 
-const EvRegIdScreen = (props) => {
+const RgRegIdScreen = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
   ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ const EvRegIdScreen = (props) => {
       return false
     }
     dispatch(setPageData({ signupData: {...signupData, ...formData} }));
-    navigation.navigate(ROUTE_EV_REG_CHARGER)
+    navigation.navigate(ROUTE_RG_REG_VEHICLE)
   }
 
   return (
@@ -148,7 +148,7 @@ const EvRegIdScreen = (props) => {
                 </View>
                 <View style={[AuthStyle.regStepBarContainer]}>
                   <MyStepIndicator
-                    stepCount={4}
+                    stepCount={3}
                     currentPosition={currentPosition}
                     setCurrentPosition={setCurrentPosition}
                   />
@@ -219,4 +219,4 @@ const EvRegIdScreen = (props) => {
   )
 }
 
-export default EvRegIdScreen;
+export default RgRegIdScreen;

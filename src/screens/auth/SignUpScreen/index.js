@@ -15,8 +15,8 @@ import { apiCheckPhone, apiGetAllStates, apiResponseIsSuccess } from '../../../u
 
 import MyStateDropdown from '../../../components/MyStateDropdown';
 import { Indicator } from '../../../components/Indicator';
-import { setDarkStatusBarStyle, showToast } from '../../../utils/Utils';
-import { useDispatch } from 'react-redux';
+import { checkApiIsLoading, endApiLoading, setDarkStatusBarStyle, showToast, startApiLoading } from '../../../utils/Utils';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPageData } from '../../../redux/data/actions';
 
 const SignUpScreen = (props) => {
@@ -36,33 +36,14 @@ const SignUpScreen = (props) => {
       apiLoadingList: [],
     }
   )
-  const checkLoading = (loadingList = null) => {
-    let curLoadingList = [...STATIC_VALUES.current['apiLoadingList']]
-    if (loadingList !== null) {
-      curLoadingList = loadingList
-    }
-    const isLoading = (!empty(curLoadingList) && curLoadingList.length > 0)
-    setLoading(isLoading)
-    return isLoading
-  }
-  const startApiLoading = (apiKey) => {
-    const newApiLoadingList = addItemToArray([...STATIC_VALUES.current['apiLoadingList']], apiKey)
-    STATIC_VALUES.current['apiLoadingList'] = (newApiLoadingList)
-    checkLoading(newApiLoadingList)
-  }
-  const endApiLoading = (apiKey) => {
-    const newApiLoadingList = removeItemFromArray([...STATIC_VALUES.current['apiLoadingList']], apiKey)
-    STATIC_VALUES.current['apiLoadingList'] = (newApiLoadingList)
-    checkLoading(newApiLoadingList)
-  }
-  const checkApiIsLoading = (apiKey) => {
-    if (!STATIC_VALUES.current['apiLoadingList'].includes(apiKey)) {
-      return false;
-    } else {
-      return true;
-    }
-  }
   ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  console_log("Signup screen signupData:::", signupData)
+
+  const authData = useSelector(state => state.auth);
+  console_log("Signup screen authData:::", authData)
 
   useEffect(() => {
     loadScreenData();
@@ -70,17 +51,17 @@ const SignUpScreen = (props) => {
 
   const loadScreenData = async () => {
     const apiKey = "apiGetAllStates";
-    if (checkApiIsLoading(apiKey)) {
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
       return false;
     }
-    startApiLoading(apiKey);
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
     const response = await apiGetAllStates();
     if (apiResponseIsSuccess(response)) {
       initStateList(response.data.state_list)
     } else {
       showToast({ message: response.message })
     }
-    endApiLoading(apiKey)
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
   }
   const [stateList, setStateList] = useState([]) //const stateList = ["Egypt", "Canada", "Australia", "Ireland"]
 
@@ -136,11 +117,11 @@ const SignUpScreen = (props) => {
 
   const sendSMS = async () => {
     const apiKey = "apiCheckPhone";
-    if (checkApiIsLoading(apiKey)) {
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
       return false
     }
     let apiRes = false;
-    startApiLoading(apiKey);
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
     const payload = { phone: formData['phone'] }
     const response = await apiCheckPhone(payload);
     if (apiResponseIsSuccess(response)) {
@@ -148,7 +129,7 @@ const SignUpScreen = (props) => {
     } else {
       showToast({ message: response.message })
     }
-    endApiLoading(apiKey)
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
     return apiRes
   }
 

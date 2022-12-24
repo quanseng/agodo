@@ -38,6 +38,7 @@ const EvRegPersonalScreen = (props) => {
   ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
   const pageData = useSelector(state => state.data.pageData);
   const signupData = pageData['signupData']
+  console_log("signupData:::", signupData)
   const [currentPosition, setCurrentPosition] = useState(0); //for stepbar
 
   const defaultFormData = {
@@ -65,8 +66,8 @@ const EvRegPersonalScreen = (props) => {
     if (formData['email'] === "") {
       showToast({ message: "Please enter your email" })
       return false
-    }else{
-      if(!validateEmail(formData['email'])) {
+    } else {
+      if (!validateEmail(formData['email'])) {
         showToast({ message: "Please enter a valid email" })
         return false
       }
@@ -76,12 +77,12 @@ const EvRegPersonalScreen = (props) => {
 
   const onPressNext = () => {
     const isValid = validateFields()
-    if(isValid) {
-      dispatch(setPageData({ signupData: {...signupData, ...formData} }));
+    if (isValid) {
+      dispatch(setPageData({ signupData: { ...signupData, personalData: formData } }));
       navigation.navigate(ROUTE_EV_REG_ID)
     }
   }
-  
+
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -149,7 +150,7 @@ const EvRegPersonalScreen = (props) => {
                 </View>
               </View>
 
-              <View style={[AuthStyle.authFormFooter]}>                 
+              <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
                     NEXT

@@ -23,7 +23,7 @@ export const COLOR = {
   FONT_GRAY: "#9F9F9F",
   FONT_LIGHT_GRAY: "rgba(64, 64, 64, 0.5)", // "#404040" 50% opacity,
   FONT_WARNING: "rgba(255, 165, 0, 0.92)",
-  SELECTION:"rgba(0, 144, 255, 0.5)",
+  SELECTION: "rgba(0, 144, 255, 0.5)",
   BG_GRAY: "#F6F7FB",
   BG_SEMI_DARK: "rgba(0, 0, 0, 0.55)",
   BG_DARK_MASK: "rgba(0, 0, 0, 0.35)",
@@ -41,8 +41,12 @@ export const IMAGE_RATIO_16X9 = 0.5625	//FOR 16:9
 export const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
 export const USER_TYPE = {
-   USER: 'user',
-   EV: 'ev'
+  USER: 'user',
+  EV: 'ev'
+}
+export const PAYMENT_METHOD = {
+  CREDIT_CARD: 'credit_card',
+  PAYPAL: 'paypal',
+  GOOGLE_PAY: 'google_pay'
 }
 
- 

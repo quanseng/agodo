@@ -28,9 +28,11 @@ export const ROUTE_EV_REG_ID = "EvRegId";
 export const ROUTE_EV_REG_CHARGER = "EvRegCharger";
 export const ROUTE_EV_REG_CREDIT_CARD = "EvRegCreditCard";
 export const ROUTE_EV_REG_VEHICLE = "EvRegVehicle";
-export const ROUTE_RG_REG_PAYMENT = "RgRegPayment";
 
-export const ROUTE_USER_REG_PERSONAL = "UserRegPersonal";
+export const ROUTE_RG_REG_PERSONAL = "RgRegPersonal";
+export const ROUTE_RG_REG_ID = "RgRegId";
+export const ROUTE_RG_REG_VEHICLE = "RgRegVehicle";
+export const ROUTE_RG_REG_PAYMENT = "RgRegPayment";
 
 export const ROUTE_TERMS_CONDITION = "TermsCondition";
 export const ROUTE_WELCOME = "Welcome";

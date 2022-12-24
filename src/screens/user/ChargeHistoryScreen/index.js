@@ -14,15 +14,14 @@ import MyTextInput from '../../../components/MyTextInput';
 import { COLOR } from '../../../utils/Constants';
 import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import MyScreenHeader from '../../../components/MyScreenHeader';
+import { setDarkStatusBarStyle } from '../../../utils/Utils';
 
 const ChargeHistoryScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setDarkStatusBarStyle(StatusBar)
     }, [])
   );
 

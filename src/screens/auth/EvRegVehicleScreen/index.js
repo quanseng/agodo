@@ -16,61 +16,71 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_VEHICLE, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
+import { apiRegisterUser, apiResponseIsSuccess } from '../../../utils/API';
+import { Indicator } from '../../../components/Indicator';
+import { endApiLoading, showToast, startApiLoading } from '../../../utils/Utils';
+import { signIn } from '../../../redux/auth/actions';
+import { useRef } from 'react';
 
 const EvRegVehicleScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  console_log("signupData:::", signupData)
+  const [currentPosition, setCurrentPosition] = useState(3);
 
   const defaultFormData = {
-    state: "",
-    phone: ""
+    brand: "",
+    color: "",
+    registration: ""
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
   const onChangeFormField = (field_name, field_value) => {
     //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
-
     console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+  const validateFields = () => {
+    // if (formData['brand'] === "") {
+    //   showToast({ message: "Please enter Brand" })
+    //   return false
+    // }
+    // if (formData['universal_plug'] === "") {
+    //   showToast({ message: "Please enter Color" })
+    //   return false
+    // }
+    // if (formData['address1'] === "") {
+    //   showToast({ message: "Please enter Registration" })
+    //   return false
+    // }
+    return true;
+  }
+  const onPressNext = () => {
+    const isValid = validateFields()
+    if (isValid) {
+      dispatch(setPageData({ signupData: { ...signupData, vehicleData: formData } }));
+      navigation.navigate(ROUTE_TERMS_CONDITION)
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
-    }
-    setErrorField([...errorList]);
-    return errorList
   }
 
-  const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_VEHICLE)
-  }
-  const [currentPosition, setCurrentPosition] = useState(3);
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -100,36 +110,36 @@ const EvRegVehicleScreen = (props) => {
                     <MyTextInput
                       label={`Brand`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['brand']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                     
+                      onChangeText={text => onChangeFormField("brand", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Color`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['color']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                      
+                      onChangeText={text => onChangeFormField("color", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Registration`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['registration']}
                       returnKeyType="next"
-                      keyboardType="email-address"
-                      onChangeText={text => onChangeFormField("phone", text)}                   
+                      keyboardType="default"
+                      onChangeText={text => onChangeFormField("registration", text)}
                     />
                   </View>
                 </View>
               </View>
 
-              <View style={[AuthStyle.authFormFooter]}>                 
+              <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
                     NEXT
@@ -140,6 +150,7 @@ const EvRegVehicleScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }

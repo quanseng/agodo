@@ -10,7 +10,7 @@ import MyTextInput from '../../../components/MyTextInput';
 import DropDown from 'react-native-paper-dropdown';
 import { PaperSelect } from 'react-native-paper-select';
 
-import { COLOR } from '../../../utils/Constants';
+import { COLOR, PAYMENT_METHOD } from '../../../utils/Constants';
 import MyDropdown from '../../../components/MyDropdown';
 import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
@@ -23,6 +23,8 @@ import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import { CreditCardInput, LiteCreditCardInput, MyCreditCardInput } from "../../../components/MyCreditCardForm/src";
 import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
+import { showToast } from '../../../utils/Utils';
 
 const EvRegCreditCardScreen = (props) => {
   const { navigation } = props;
@@ -37,51 +39,58 @@ const EvRegCreditCardScreen = (props) => {
   ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
   const pageData = useSelector(state => state.data.pageData);
   const signupData = pageData['signupData']
+  console_log("signupData:::", signupData)
   const [currentPosition, setCurrentPosition] = useState(2); //for stepbar
- 
+
   const defaultFormData = {
-    state: "",
-    phone: ""
+    billing_address: ""
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
   const onChangeFormField = (field_name, field_value) => {
     //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
-
     console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
-    }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
+  const validateFields = () => {
+    if (cardData['valid']) {
+      if (formData['billing_address'] === "") {
+        showToast({ message: "Please enter billing address" })
+        return false
       }
     } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
+      showToast({ message: "Please enter card details correctly" })
+      return false
     }
-    setErrorField([...errorList]);
-    return errorList
+    return true
+  }
+
+  const [cardData, setCardData] = useState({});
+
+  const onFocusCardField = (field) => {
+    console_log("onFocusCardField::::", field)
+  }
+  const onChangeCardField = (card_data) => {
+    console_log("onChangeCardField::::", card_data)
+    setCardData(card_data)
+  }
+
+  const createCardPaymentData = () => {
+    const cardPaymentData = cardData['values']
+    cardPaymentData['billing_address'] = formData['billing_address']
+    const data = { payment_method: PAYMENT_METHOD.CREDIT_CARD, details: cardPaymentData }
+    return data
   }
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_VEHICLE)
-  }
-
-  const onFocusCardField = (field)=>{
-    console_log("field::::", field)
-  }
-  const onChangeCardField = (cardData)=>{
-    console_log("cardData::::", cardData)
+    const isValid = validateFields()
+    if (isValid) {
+      const cardPaymentData = createCardPaymentData()
+      console_log("cardPaymentData:::", cardPaymentData)
+      dispatch(setPageData({ signupData: { ...signupData, paymentMethodData: { ...cardPaymentData } } }));
+      navigation.navigate(ROUTE_EV_REG_VEHICLE)
+    }
   }
 
   return (
@@ -116,20 +125,20 @@ const EvRegCreditCardScreen = (props) => {
                       invalidColor={"red"}
                       placeholderColor={"darkgray"}
                       onFocus={onFocusCardField}
-                      onChange={onChangeCardField} 
-                      />
+                      onChange={onChangeCardField}
+                    />
                   </View>
 
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Billing Address`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['billing_address']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}                    
+                      onChangeText={text => onChangeFormField("billing_address", text)}
                     />
-                  </View>                   
+                  </View>
                 </View>
               </View>
 

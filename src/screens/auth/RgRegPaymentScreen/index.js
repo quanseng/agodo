@@ -12,90 +12,137 @@ import { PaperSelect } from 'react-native-paper-select';
 import { RadioButton } from 'react-native-paper';
 
 
-import { COLOR } from '../../../utils/Constants';
+import { COLOR, PAYMENT_METHOD } from '../../../utils/Constants';
 import MyDropdown from '../../../components/MyDropdown';
 import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_VEHICLE, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import { CreditCardInput, LiteCreditCardInput, MyCreditCardInput } from "../../../components/MyCreditCardForm/src";
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
+import { showToast } from '../../../utils/Utils';
+import { useRef } from 'react';
+
+const paymentMethodList = [
+  {
+    'label': 'Credit Card',
+    'value': PAYMENT_METHOD.CREDIT_CARD,
+  },
+  {
+    'label': 'Paypal',
+    'value': PAYMENT_METHOD.PAYPAL,
+  },
+  {
+    'label': 'Google Pay',
+    'value': PAYMENT_METHOD.GOOGLE_PAY,
+  }
+]
 
 const RgRegPaymentScreen = (props) => {
   const { navigation } = props;
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  console_log("signupData:::", signupData)
+  const [currentPosition, setCurrentPosition] = useState(2); //for stepbar
 
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
+  const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD.CREDIT_CARD);
 
   const defaultFormData = {
-    state: "",
-    phone: ""
+    billing_address: "",
+    paypal_address: "",
+    google_pay_address: ""
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
   const onChangeFormField = (field_name, field_value) => {
     //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
-
     console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
-    }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
+  const validateFields = () => {
+    if (paymentMethod === PAYMENT_METHOD.CREDIT_CARD) {
+      if (cardData['valid']) {
+        if (formData['billing_address'] === "") {
+          showToast({ message: "Please enter billing address" })
+          return false
+        }
+      } else {
+        showToast({ message: "Please enter card details correctly" })
+        return false
       }
     }
-    setErrorField([...errorList]);
-    return errorList
+    else if (paymentMethod === PAYMENT_METHOD.PAYPAL) {
+      if (formData['paypal_address'] === "") {
+        showToast({ message: "Please enter paypal address" })
+        return false
+      }
+    }
+    else if (paymentMethod === PAYMENT_METHOD.GOOGLE_PAY) {
+      if (formData['google_pay_address'] === "") {
+        showToast({ message: "Please enter google pay" })
+        return false
+      }
+    }
+    return true
+  }
+
+  const [cardData, setCardData] = useState({});
+
+  const onFocusCardField = (field) => {
+    console_log("onFocusCardField::::", field)
+  }
+  const onChangeCardField = (card_data) => {
+    console_log("onChangeCardField::::", card_data)
+    setCardData(card_data)
+  }
+
+  const createPaymentData = () => {
+    const data = { payment_method: paymentMethod }
+    let payment_details = null
+    if (paymentMethod === PAYMENT_METHOD.CREDIT_CARD) {
+      const cardPaymentData = cardData['values']
+      cardPaymentData['billing_address'] = formData['billing_address']
+      payment_details = { ...cardPaymentData }
+    }
+    else if (paymentMethod === PAYMENT_METHOD.PAYPAL) {
+      payment_details = {
+        paypal_address: formData['paypal_address']
+      }
+    }
+    else if (paymentMethod === PAYMENT_METHOD.GOOGLE_PAY) {
+      payment_details = {
+        google_pay_address: formData['google_pay_address']
+      }
+    }
+    data['details'] = payment_details
+    return data
   }
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_VEHICLE)
-  }
-  const [currentPosition, setCurrentPosition] = useState(2);
-
-  const onFocusCardField = (field) => {
-    console_log("field::::", field)
-  }
-  const onChangeCardField = (cardData) => {
-    console_log("cardData::::", cardData)
-  }
-  const [paymentMethod, setPaymentMethod] = useState('credit_card');
-  const paymentMethodList = [
-    {
-      'label': 'Credit Card',
-      'value': 'credit_card',
-    },
-    {
-      'label': 'Paypal',
-      'value': 'paypal',
-    },
-    {
-      'label': 'Google Pay',
-      'value': 'google_pay',
+    const isValid = validateFields()
+    if (isValid) {
+      const payment_data = createPaymentData()
+      console_log("payment_data:::", payment_data)
+      dispatch(setPageData({ signupData: { ...signupData, paymentMethodData: { ...payment_data } } }));
+      navigation.navigate(ROUTE_TERMS_CONDITION)
     }
-  ]
+  }
 
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
@@ -139,25 +186,63 @@ const RgRegPaymentScreen = (props) => {
                     </RadioButton.Group>
                   </View>
 
-                  <View style={[styles.CreditCardBox]}>
-                    <MyCreditCardInput
-                      autoFocus
-                      validColor={"black"}
-                      invalidColor={"red"}
-                      placeholderColor={"darkgray"}
-                      onFocus={onFocusCardField}
-                      onChange={onChangeCardField}
-                    />
-                    <View style={CustomStyle.formControl}>
-                      <MyTextInput
-                        label={`Billing Address`}
-                        placeholder={``}
-                        value={formData['phone']}
-                        returnKeyType="done"
-                        keyboardType="default"
-                        onChangeText={text => onChangeFormField("phone", text)}
-                      />
-                    </View>
+                  <View style={[styles.PaymentMethodBox]}>
+                    {
+                      (paymentMethod === PAYMENT_METHOD.CREDIT_CARD) ? (
+                        <>
+                          <View style={[styles.CreditCardBox]}>
+                            <MyCreditCardInput
+                              autoFocus
+                              validColor={"black"}
+                              invalidColor={"red"}
+                              placeholderColor={"darkgray"}
+                              onFocus={onFocusCardField}
+                              onChange={onChangeCardField}
+                            />
+                            <View style={CustomStyle.formControl}>
+                              <MyTextInput
+                                label={`Billing Address`}
+                                placeholder={``}
+                                value={formData['phone']}
+                                returnKeyType="done"
+                                keyboardType="default"
+                                onChangeText={text => onChangeFormField("phone", text)}
+                              />
+                            </View>
+                          </View>
+                        </>
+                      ) : (paymentMethod === PAYMENT_METHOD.PAYPAL) ? (
+                        <>
+                          <View style={[styles.PaypalBox]}>
+                            <View style={CustomStyle.formControl}>
+                              <MyTextInput
+                                label={`Paypal Address`}
+                                placeholder={``}
+                                value={formData['paypal_address']}
+                                returnKeyType="done"
+                                keyboardType="default"
+                                onChangeText={text => onChangeFormField("paypal_address", text)}
+                              />
+                            </View>
+                          </View>
+                        </>
+                      ) : (
+                        <>
+                          <View style={[styles.GooglePayBox]}>
+                            <View style={CustomStyle.formControl}>
+                              <MyTextInput
+                                label={`Google Pay Address`}
+                                placeholder={``}
+                                value={formData['google_pay_address']}
+                                returnKeyType="done"
+                                keyboardType="default"
+                                onChangeText={text => onChangeFormField("google_pay_address", text)}
+                              />
+                            </View>
+                          </View>
+                        </>
+                      )
+                    }
                   </View>
                 </View>
               </View>

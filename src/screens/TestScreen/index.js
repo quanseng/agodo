@@ -17,15 +17,14 @@ import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures'
 import CustomStyle from '../../styles/CustomStyle';
 import AuthStyle from '../../styles/AuthStyle';
 import MyScreenHeader from '../../components/MyScreenHeader';
+import { setDarkStatusBarStyle } from '../../utils/Utils';
 
 const TestScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setDarkStatusBarStyle(StatusBar)
     }, [])
   );
 
@@ -65,7 +64,7 @@ const TestScreen = (props) => {
       presentationStyle: 'pageSheet'
     }
     const result = await launchCamera(options);
-    console_log("options,result::::",options,result)
+    console_log("options,result::::", options, result)
     //navigation.navigate(ROUTE_PHONE_VERIFY)
 
   }
@@ -83,14 +82,14 @@ const TestScreen = (props) => {
                 <View style={[AuthStyle.authFormHeader]}>
                   <Text style={[BaseStyle.textLg1, BaseStyle.textBold, BaseStyle.textPrimary]}>Test Screen</Text>
                 </View>
-                 
+
                 <View style={[AuthStyle.authFormBody]}>
                   <View style={[CustomStyle.formControl, BaseStyle.mb6]}>
                     <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Upload your Verification ID</Text>
                   </View>
                 </View>
               </View>
-              <View style={[AuthStyle.authFormFooter]}>                 
+              <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressNext()}>
                     Test

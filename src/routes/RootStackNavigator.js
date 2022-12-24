@@ -5,7 +5,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import AuthStackNavigator from './AuthStackNavigator';
 import DrawerStackNavigator from './DrawerNavigator';
 
-import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_PHONE_VERIFY, ROUTE_EV_REG_PERSONAL, ROUTE_EV_REG_VEHICLE, ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_SPLASH, ROUTE_TEST, ROUTE_TEST1, ROUTE_EV_REG_ID, ROUTE_EV_REG_CHARGER, ROUTE_EV_REG_CREDIT_CARD, ROUTE_RG_REG_PAYMENT, ROUTE_TERMS_CONDITION, ROUTE_WELCOME, ROUTE_HOME, ROUTE_USER_TAB_NAVIGATOR, ROUTE_LOCATION_ENABLE } from './RouteNames';
+import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_DRAWER_STACK_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_PHONE_VERIFY, ROUTE_EV_REG_PERSONAL, ROUTE_EV_REG_VEHICLE, ROUTE_SIGNUP, ROUTE_SIGNUP_TYPE, ROUTE_SPLASH, ROUTE_TEST, ROUTE_TEST1, ROUTE_EV_REG_ID, ROUTE_EV_REG_CHARGER, ROUTE_EV_REG_CREDIT_CARD, ROUTE_RG_REG_PAYMENT, ROUTE_TERMS_CONDITION, ROUTE_WELCOME, ROUTE_HOME, ROUTE_USER_TAB_NAVIGATOR, ROUTE_LOCATION_ENABLE, ROUTE_RG_REG_PERSONAL, ROUTE_RG_REG_ID, ROUTE_RG_REG_VEHICLE } from './RouteNames';
 import SplashScreen from '../screens/SplashScreen';
 import { TouchableOpacity, Image } from 'react-native';
 import styles from './styles';
@@ -27,6 +27,9 @@ import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import HomeScreen from '../screens/user/HomeScreen';
 import UserTabNavigator from './user/UserTabNavigator';
 import LocationEnableScreen from '../screens/user/LocationEnableScreen';
+import RgRegPersonalScreen from '../screens/auth/RgRegPersonalScreen';
+import RgRegIdScreen from '../screens/auth/RgRegIdScreen';
+import RgRegVehicleScreen from '../screens/auth/RgRegVehicleScreen';
 
 const WhiteTheme = {
   ...DefaultTheme,
@@ -51,7 +54,7 @@ const RootStackNavigator = () => {
             backgroundColor: 'rgba(255,255,255,1)',
             // elevation: 0, // remove shadow on Android
             // shadowOpacity: 0, // remove shadow on iOS
-            borderBottomWidth: 1 // Just in case.    
+            borderBottomWidth: 1 // Just in case.
           },
           headerTintColor: 'black',
           headerTitle: "",
@@ -105,6 +108,36 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
+
+        <Stack.Screen
+          name={ROUTE_RG_REG_PERSONAL}
+          component={RgRegPersonalScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={ROUTE_RG_REG_ID}
+          component={RgRegIdScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={ROUTE_RG_REG_VEHICLE}
+          component={RgRegVehicleScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        <Stack.Screen
+          name={ROUTE_RG_REG_PAYMENT}
+          component={RgRegPaymentScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+
         <Stack.Screen
           name={ROUTE_EV_REG_PERSONAL}
           component={EvRegPersonalScreen}
@@ -140,13 +173,7 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-        <Stack.Screen
-          name={ROUTE_RG_REG_PAYMENT}
-          component={RgRegPaymentScreen}
-          options={{
-            headerShown: false
-          }}
-        />
+
         <Stack.Screen
           name={ROUTE_TERMS_CONDITION}
           component={TermsConditionScreen}
@@ -161,13 +188,7 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-        <Stack.Screen
-          name={ROUTE_HOME}
-          component={HomeScreen}
-          options={{
-            headerShown: false
-          }}
-        />
+
         <Stack.Screen
           name={ROUTE_LOCATION_ENABLE}
           component={LocationEnableScreen}
@@ -175,12 +196,14 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-
-
-
-
-
-
+        <Stack.Screen
+          name={ROUTE_HOME}
+          component={HomeScreen}
+          options={{
+            headerShown: false
+          }}
+        />
+        
         <Stack.Screen
           name={ROUTE_USER_TAB_NAVIGATOR}
           component={UserTabNavigator}

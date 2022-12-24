@@ -5,7 +5,7 @@ import styles from './styles';
 import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, isEmpty } from '../../../utils/Misc';
+import { console_log, isEmpty, validateEmail } from '../../../utils/Misc';
 import MyTextInput from '../../../components/MyTextInput';
 import DropDown from 'react-native-paper-dropdown';
 import { PaperSelect } from 'react-native-paper-select';
@@ -16,16 +16,16 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_CREDIT_CARD, ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_ID, ROUTE_RG_REG_ID } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPageData } from '../../../redux/data/actions';
 import { showToast } from '../../../utils/Utils';
+import { setPageData } from '../../../redux/data/actions';
 
-const EvRegChargerScreen = (props) => {
+const RgRegPersonalScreen = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
   ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
@@ -39,14 +39,12 @@ const EvRegChargerScreen = (props) => {
   const pageData = useSelector(state => state.data.pageData);
   const signupData = pageData['signupData']
   console_log("signupData:::", signupData)
-  const [currentPosition, setCurrentPosition] = useState(1); //for stepbar
+  const [currentPosition, setCurrentPosition] = useState(0); //for stepbar
 
   const defaultFormData = {
-    plug_type: "",
-    universal_plug: "",
-    address1: "",
-    address2: "",
-    address3: "",
+    first_name: "",
+    last_name: "",
+    email: "",
   }
   const [formData, setFormData] = useState(defaultFormData);
   const onChangeFormField = (field_name, field_value) => {
@@ -55,28 +53,36 @@ const EvRegChargerScreen = (props) => {
     console_log("updatedData:::", updatedData)
     setFormData(updatedData)
   }
+
   const validateFields = () => {
-    if (formData['plug_type'] === "") {
-      showToast({ message: "Please enter plug type" })
+    if (formData['first_name'] === "") {
+      showToast({ message: "Please enter your first name" })
       return false
     }
-    if (formData['universal_plug'] === "") {
-      showToast({ message: "Please enter universal plug" })
+    if (formData['last_name'] === "") {
+      showToast({ message: "Please enter your last name" })
       return false
     }
-    if (formData['address1'] === "") {
-      showToast({ message: "Please enter adress Line 1" })
+    if (formData['email'] === "") {
+      showToast({ message: "Please enter your email" })
       return false
-    } 
+    } else {
+      if (!validateEmail(formData['email'])) {
+        showToast({ message: "Please enter a valid email" })
+        return false
+      }
+    }
     return true;
   }
+
   const onPressNext = () => {
     const isValid = validateFields()
-    if(isValid) {
-      dispatch(setPageData({ signupData: {...signupData, evSourceData:formData} }));
-      navigation.navigate(ROUTE_EV_REG_CREDIT_CARD)
+    if (isValid) {
+      dispatch(setPageData({ signupData: { ...signupData, personalData: formData } }));
+      navigation.navigate(ROUTE_RG_REG_ID)
     }
   }
+
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -92,64 +98,53 @@ const EvRegChargerScreen = (props) => {
                 </View>
                 <View style={[AuthStyle.regStepBarContainer]}>
                   <MyStepIndicator
-                    stepCount={4}
+                    stepCount={3}
                     currentPosition={currentPosition}
                     setCurrentPosition={setCurrentPosition}
                   />
                 </View>
                 <View style={[AuthStyle.authFormBody]}>
                   <View style={[CustomStyle.formControl, BaseStyle.mb6]}>
-                    <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Charger Details</Text>
+                    <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Personal Details</Text>
                   </View>
 
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Plug Type`}
+                      label={`First Name`}
                       placeholder={``}
-                      value={formData['plug_type']}
+                      value={formData['first_name']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("plug_type", text)}
-                    />
-                  </View>
-                  <View style={[CustomStyle.formControl]}>
-                    <MyTextInput
-                      label={`Universal Plug`}
-                      placeholder={``}
-                      value={formData['universal_plug']}
-                      returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("universal_plug", text)}
+                      onChangeText={text => onChangeFormField("first_name", text)}
+                      left={<TextInput.Icon icon={({ size, color }) => (
+                        <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
+                      )} />}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Adress Line 1`}
+                      label={`Last Name`}
                       placeholder={``}
-                      value={formData['address1']}
+                      value={formData['last_name']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("address1", text)}
+                      onChangeText={text => onChangeFormField("last_name", text)}
+                      left={<TextInput.Icon icon={({ size, color }) => (
+                        <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
+                      )} />}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Adress Line 2`}
+                      label={`Email`}
                       placeholder={``}
-                      value={formData['address2']}
+                      value={formData['email']}
                       returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("address2", text)}
-                    />
-                  </View>
-                  <View style={CustomStyle.formControl}>
-                    <MyTextInput
-                      label={`Adress Line 3`}
-                      placeholder={``}
-                      value={formData['address3']}
-                      returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("address3", text)}
+                      keyboardType="email-address"
+                      onChangeText={text => onChangeFormField("email", text)}
+                      left={<TextInput.Icon icon={({ size, color }) => (
+                        <Image source={require('../../../assets/images/icons/envelope.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
+                      )} />}
                     />
                   </View>
                 </View>
@@ -170,4 +165,4 @@ const EvRegChargerScreen = (props) => {
   )
 }
 
-export default EvRegChargerScreen;
+export default RgRegPersonalScreen;

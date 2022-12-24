@@ -17,38 +17,14 @@ import MySearchChargerBox from '../../../components/MySearchChargerBox';
 const LocationEnableScreen = (props) => {
   const { navigation } = props;
 
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('light-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
-
-  const sliderRef = useRef(null)
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-  const [slideTimestamp, setSlideTimestamp] = useState(0)
-
-  const onSlideChange = (index, lastIndex) => {
-    console_log("index, lastIndex:::", index, lastIndex)
-    setCurrentSlideIndex(index)
-    setSlideTimestamp(get_utc_timestamp_ms())
-  }
-
   const gotoSignUpPage = () => {
     console_log("gotoLoginPage::::")
     navigation.replace(ROUTE_SIGNUP);
   }
 
-
   const onPressNext = () => {
     console_log("onDone::::")
     gotoSignUpPage();
-  }
-
-  const [tabUri, setTabUri] = useState('home')
-  const onPressTabUri = (uri) => {
-    setTabUri(uri)
   }
 
   return (

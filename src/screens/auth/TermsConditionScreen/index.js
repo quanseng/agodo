@@ -16,77 +16,65 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_PHONE_VERIFY } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_VEHICLE, ROUTE_LOCATION_ENABLE, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
+import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
+import MyStepIndicator from '../../../components/MyStepIndicator';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
+import { apiRegisterUser, apiResponseIsSuccess } from '../../../utils/API';
+import { Indicator } from '../../../components/Indicator';
+import { checkApiIsLoading, endApiLoading, showToast, startApiLoading } from '../../../utils/Utils';
+import { signIn } from '../../../redux/auth/actions';
+import { useRef } from 'react';
 
 const TermsConditionScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
-    }, [])
-  );
-
-  const defaultFormData = {
-    state: "",
-    phone: ""
-  }
-  const requiredFieldList = ["state", "phone"]
-  const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
-  const onChangeFormField = (field_name, field_value) => {
-    //console_log("field_name, field_value", field_name, field_value)
-    const updatedData = { ...formData }
-    updatedData[field_name] = field_value
-
-    console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
-    setFormData(updatedData)
-  }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
     }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
-    }
-    setErrorField([...errorList]);
-    return errorList
-  }
-
-
-  const [showDropDown, setShowDropDown] = useState(false);
-  const genderList = [
-    {
-      label: "Male",
-      value: "male",
-    },
-    {
-      label: "Female",
-      value: "female",
-    },
-    {
-      label: "Others",
-      value: "others",
-    },
-
-  ];
-  const [gender, setGender] = useState("");
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const pageData = useSelector(state => state.data.pageData);
+  const signupData = pageData['signupData']
+  console_log("Final signupData:::", signupData)
 
   const onPressNext = () => {
-    navigation.navigate(ROUTE_PHONE_VERIFY)
+    // const isValid = true
+    // if (isValid) {
+
+    // }
+    submitSignupData(signupData)
   }
+
+  const submitSignupData = async (userSignupData) => {
+    const apiKey = "apiRegisterUser";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false
+    }
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    const response = await apiRegisterUser({...userSignupData});
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    console_log('response::::', response)
+    if (apiResponseIsSuccess(response)) {
+      showToast({ message: response.message })
+      const data = response['data']
+      let user = data['user']
+      dispatch(signIn(user));
+      navigation.reset({
+        index: 0,
+        routes: [{ name: ROUTE_LOCATION_ENABLE }]
+      })
+    } else {
+      showToast({ message: response.message })
+    }
+  }
+
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -105,9 +93,9 @@ const TermsConditionScreen = (props) => {
                   <View style={[CustomStyle.formControl]}>
                     <View style={[styles.termsWrapper]}>
                       <Text style={[BaseStyle.textSm]}>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Lectus sit amet est placerat in egestas. 
-                      {"\n"} {"\n"}
-Sed adipiscing diam donec adipiscing tristique. Ultricies mi quis hendrerit dolormagna. In tellus integer feugiat scelerisque. Sed arcu non odio euismod. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum. 
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,  sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio. Lectus sit amet est placerat in egestas.
+                        {"\n"} {"\n"}
+                        Sed adipiscing diam donec adipiscing tristique. Ultricies mi quis hendrerit dolormagna. In tellus integer feugiat scelerisque. Sed arcu non odio euismod. Pretium vulputate sapien nec sagittis aliquam malesuada bibendum.
                       </Text>
                     </View>
                   </View>
@@ -118,7 +106,7 @@ Sed adipiscing diam donec adipiscing tristique. Ultricies mi quis hendrerit dolo
               <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <Text style={[BaseStyle.textXs, BaseStyle.textGray]}>
-                  By proceeding, I agree to AGODO <Text style={[BaseStyle.textXs, BaseStyle.textPrimary]}>Terms of Use</Text> and acknowlege that I have read the <Text style={[BaseStyle.textXs, BaseStyle.textPrimary]}>Privacy Policy</Text>.
+                    By proceeding, I agree to AGODO <Text style={[BaseStyle.textXs, BaseStyle.textPrimary]}>Terms of Use</Text> and acknowlege that I have read the <Text style={[BaseStyle.textXs, BaseStyle.textPrimary]}>Privacy Policy</Text>.
                   </Text>
                 </View>
                 <View style={[CustomStyle.formControl]}>
@@ -131,6 +119,7 @@ Sed adipiscing diam donec adipiscing tristique. Ultricies mi quis hendrerit dolo
           </View>
         </View>
       </ScrollView>
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }

@@ -7,10 +7,11 @@ import BaseStyle from '../../../styles/BaseStyle';
 import { USER_TYPE } from '../../../utils/Constants';
 import MyButton from '../../../components/MyButton';
 import MyScreenHeader from '../../../components/MyScreenHeader';
-import { ROUTE_EV_REG_PERSONAL, ROUTE_USER_REG_PERSONAL } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_PERSONAL, ROUTE_RG_REG_PERSONAL } from '../../../routes/RouteNames';
 import AuthStyle from '../../../styles/AuthStyle';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageData } from '../../../redux/data/actions';
+import { console_log } from '../../../utils/Misc';
 
 const SignupTypeScreen = (props) => {
   const { navigation } = props;
@@ -45,8 +46,9 @@ const SignupTypeScreen = (props) => {
 
   const onPressNext = () => {
     dispatch(setPageData({ signupData: {...formData, user_type: currentUserType} }));
+    console_log("currentUserType:::", currentUserType)
     if(currentUserType === USER_TYPE.USER) {
-      navigation.navigate(ROUTE_USER_REG_PERSONAL);
+      navigation.navigate(ROUTE_RG_REG_PERSONAL);
     }else{
       navigation.navigate(ROUTE_EV_REG_PERSONAL);
     }

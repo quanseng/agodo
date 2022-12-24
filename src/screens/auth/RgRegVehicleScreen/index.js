@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView, Image, StatusBar, View, Text, ScrollView } from 'react-native';
 
 import styles from './styles';
@@ -16,16 +16,20 @@ import { TextInput } from 'react-native-paper';
 import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_CREDIT_CARD, ROUTE_EV_REG_VEHICLE } from '../../../routes/RouteNames';
+import { ROUTE_EV_REG_VEHICLE, ROUTE_RG_REG_PAYMENT, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageData } from '../../../redux/data/actions';
-import { showToast } from '../../../utils/Utils';
+import { apiRegisterUser, apiResponseIsSuccess } from '../../../utils/API';
+import { Indicator } from '../../../components/Indicator';
+import { endApiLoading, showToast, startApiLoading } from '../../../utils/Utils';
+import { signIn } from '../../../redux/auth/actions';
+import { useRef } from 'react';
 
-const EvRegChargerScreen = (props) => {
+const RgRegVehicleScreen = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
   ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
@@ -39,44 +43,44 @@ const EvRegChargerScreen = (props) => {
   const pageData = useSelector(state => state.data.pageData);
   const signupData = pageData['signupData']
   console_log("signupData:::", signupData)
-  const [currentPosition, setCurrentPosition] = useState(1); //for stepbar
+  const [currentPosition, setCurrentPosition] = useState(1);
 
   const defaultFormData = {
-    plug_type: "",
-    universal_plug: "",
-    address1: "",
-    address2: "",
-    address3: "",
+    brand: "",
+    color: "",
+    registration: ""
   }
   const [formData, setFormData] = useState(defaultFormData);
   const onChangeFormField = (field_name, field_value) => {
+    //console_log("field_name, field_value", field_name, field_value)
     const updatedData = { ...formData }
     updatedData[field_name] = field_value
     console_log("updatedData:::", updatedData)
     setFormData(updatedData)
   }
   const validateFields = () => {
-    if (formData['plug_type'] === "") {
-      showToast({ message: "Please enter plug type" })
+    if (formData['brand'] === "") {
+      showToast({ message: "Please enter Brand" })
       return false
     }
     if (formData['universal_plug'] === "") {
-      showToast({ message: "Please enter universal plug" })
+      showToast({ message: "Please enter Color" })
       return false
     }
     if (formData['address1'] === "") {
-      showToast({ message: "Please enter adress Line 1" })
+      showToast({ message: "Please enter Registration" })
       return false
-    } 
+    }
     return true;
   }
   const onPressNext = () => {
     const isValid = validateFields()
-    if(isValid) {
-      dispatch(setPageData({ signupData: {...signupData, evSourceData:formData} }));
-      navigation.navigate(ROUTE_EV_REG_CREDIT_CARD)
+    if (isValid) {
+      dispatch(setPageData({ signupData: { ...signupData, vehicleData: formData } }));
+      navigation.navigate(ROUTE_RG_REG_PAYMENT)
     }
   }
+
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
@@ -92,64 +96,44 @@ const EvRegChargerScreen = (props) => {
                 </View>
                 <View style={[AuthStyle.regStepBarContainer]}>
                   <MyStepIndicator
-                    stepCount={4}
+                    stepCount={3}
                     currentPosition={currentPosition}
                     setCurrentPosition={setCurrentPosition}
                   />
                 </View>
                 <View style={[AuthStyle.authFormBody]}>
                   <View style={[CustomStyle.formControl, BaseStyle.mb6]}>
-                    <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Charger Details</Text>
+                    <Text style={[BaseStyle.textSm, BaseStyle.textGray]}>Vehicle Details</Text>
                   </View>
 
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Plug Type`}
+                      label={`Brand`}
                       placeholder={``}
-                      value={formData['plug_type']}
+                      value={formData['brand']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("plug_type", text)}
-                    />
-                  </View>
-                  <View style={[CustomStyle.formControl]}>
-                    <MyTextInput
-                      label={`Universal Plug`}
-                      placeholder={``}
-                      value={formData['universal_plug']}
-                      returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("universal_plug", text)}
+                      onChangeText={text => onChangeFormField("brand", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Adress Line 1`}
+                      label={`Color`}
                       placeholder={``}
-                      value={formData['address1']}
+                      value={formData['color']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("address1", text)}
+                      onChangeText={text => onChangeFormField("color", text)}
                     />
                   </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Adress Line 2`}
+                      label={`Registration`}
                       placeholder={``}
-                      value={formData['address2']}
+                      value={formData['registration']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("address2", text)}
-                    />
-                  </View>
-                  <View style={CustomStyle.formControl}>
-                    <MyTextInput
-                      label={`Adress Line 3`}
-                      placeholder={``}
-                      value={formData['address3']}
-                      returnKeyType="next"
-                      keyboardType="default"
-                      onChangeText={text => onChangeFormField("address3", text)}
+                      onChangeText={text => onChangeFormField("registration", text)}
                     />
                   </View>
                 </View>
@@ -166,8 +150,9 @@ const EvRegChargerScreen = (props) => {
           </View>
         </View>
       </ScrollView>
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }
 
-export default EvRegChargerScreen;
+export default RgRegVehicleScreen;

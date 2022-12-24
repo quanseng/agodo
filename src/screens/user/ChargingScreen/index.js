@@ -22,15 +22,14 @@ import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
 import MyVerticalStepIndicator from '../../../components/MyVerticalStepIndicator';
+import { setDarkStatusBarStyle } from '../../../utils/Utils';
 
 const ChargingScreen = (props) => {
   const { navigation } = props;
 
   useFocusEffect(
     React.useCallback(() => {
-      StatusBar.setBarStyle('dark-content');
-      StatusBar.setBackgroundColor('rgba(255,255,255,0)');
-      StatusBar.setTranslucent(true);
+      setDarkStatusBarStyle(StatusBar)
     }, [])
   );
 

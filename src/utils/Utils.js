@@ -60,7 +60,7 @@ export const isPadTablet = () => {
 export const setDarkStatusBarStyle = (statusbar) => {
   statusbar.setBarStyle('dark-content');
   if (isAndroid) {
-    statusbar.setBackgroundColor('rgba(255,255,255,1)');
+    statusbar.setBackgroundColor('rgba(255,255,255,0)');
     statusbar.setTranslucent(true);
   } 
 }

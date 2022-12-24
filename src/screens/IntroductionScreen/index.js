@@ -9,14 +9,15 @@ import ResponsiveImageView from 'react-native-responsive-image-view';
 import BaseStyle from '../../styles/BaseStyle';
 import styles from './styles';
 import logoWhite from "../../assets/images/logo_text_white.png";
-import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_SIGNIN, ROUTE_SIGNUP } from '../../routes/RouteNames';
+import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_SIGNIN, ROUTE_SIGNUP, ROUTE_WELCOME } from '../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../utils/Misc';
 import { useState } from 'react';
 import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 import { SafeAreaView } from 'react-navigation';
 import CustomStyle from '../../styles/CustomStyle';
-import { setDarkStatusBarStyle, setLightStatusBarStyle } from '../../utils/Utils';
+import { setLightStatusBarStyle } from '../../utils/Utils';
+import { useSelector } from 'react-redux';
 
 const data = [
   {
@@ -45,11 +46,23 @@ const data = [
 const IntroductionScreen = (props) => {
   const { navigation } = props;
 
+  const { signed, user } = useSelector(state => state.auth);
+  console_log("IntroductionScreen signed, user:::", signed, user)
+
   useFocusEffect(
     React.useCallback(() => {
       setLightStatusBarStyle(StatusBar)
     }, [])
   );
+
+  useEffect(() => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTE_WELCOME }]
+    })
+
+  }, [signed, user])
+
 
   const sliderRef = useRef(null)
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
@@ -62,8 +75,11 @@ const IntroductionScreen = (props) => {
   }
 
   const gotoSignUpPage = () => {
-    console_log("gotoLoginPage::::")
-    navigation.replace(ROUTE_SIGNUP);
+    console_log("gotoSignUpPage::::")
+    navigation.reset({
+      index: 0,
+      routes: [{ name: ROUTE_SIGNUP }]
+    })
   }
 
   const _renderItem = (slideItem) => {
@@ -71,7 +87,7 @@ const IntroductionScreen = (props) => {
     return (
       <ScrollView style={[styles.slideItem]}>
         <View style={[styles.slideImageWrapper]}>
-          <Image source={item.image} style={[styles.slideImage]} resizeMode="cover" fadeDuration={100}  />
+          <Image source={item.image} style={[styles.slideImage]} resizeMode="cover" fadeDuration={100} />
         </View>
         <View style={[styles.slideTextWrapper]}>
           <View style={[styles.slidePrimaryTextWrapper]}>
@@ -89,39 +105,49 @@ const IntroductionScreen = (props) => {
     return item.text
   }
 
-  const onSkip = ()=>{
+  const onSkip = () => {
     console_log("onSkip::::")
     gotoSignUpPage();
   }
-  const onDone = ()=>{
+  const onDone = () => {
     console_log("onDone::::")
     gotoSignUpPage();
   }
 
   return (
     <ImageBackground style={[CustomStyle.screenContainer]} source={require('../../assets/images/gradient-bg.png')}>
-      <View style={[styles.introScreen]}>
-        <View style={[CustomStyle.logoWrapper]}>
-          <Image source={require('../../assets/images/logo_text_white.png')} style={[CustomStyle.logo]} alt="logo" resizeMode="contain" />
-        </View>
+      {
+        (signed) ? (
+          <>
+          </>
+        ) : (
+          <>
+            <View style={[styles.introScreen]}>
+              <View style={[CustomStyle.logoWrapper]}>
+                <Image source={require('../../assets/images/logo_text_white.png')} style={[CustomStyle.logo]} alt="logo" resizeMode="contain" />
+              </View>
 
-        <View style={styles.sliderContainer}>
-          <AppIntroSlider
-            ref={sliderRef}
-            keyExtractor={_keyExtractor}
-            renderItem={_renderItem}
-            data={data}
-            showSkipButton={true}
-            showNextButton={true}
-            showDoneButton={true}
-            dotStyle={styles.dotStyle}
-            activeDotStyle={styles.activeDotStyle}
-            // onSlideChange={onSlideChange}
-            onSkip={onSkip}
-            onDone={onDone}
-          />
-        </View>
-      </View>
+              <View style={styles.sliderContainer}>
+                <AppIntroSlider
+                  ref={sliderRef}
+                  keyExtractor={_keyExtractor}
+                  renderItem={_renderItem}
+                  data={data}
+                  showSkipButton={true}
+                  showNextButton={true}
+                  showDoneButton={true}
+                  dotStyle={styles.dotStyle}
+                  activeDotStyle={styles.activeDotStyle}
+                  // onSlideChange={onSlideChange}
+                  onSkip={onSkip}
+                  onDone={onDone}
+                />
+              </View>
+            </View>
+          </>
+        )
+      }
+
     </ImageBackground>
   )
 }
