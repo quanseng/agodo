@@ -4,6 +4,7 @@ import { Image, Text, TouchableOpacity, View } from 'react-native';
 import BaseStyle from '../../styles/BaseStyle';
 import CustomStyle from '../../styles/CustomStyle';
 import { COLOR, SIZE } from '../../utils/Constants';
+import { console_log } from '../../utils/Misc';
 
 const MyScreenHeader = (props) => {
   const { headerType = "1", logoType = "default", title = "" } = props;
@@ -11,7 +12,11 @@ const MyScreenHeader = (props) => {
 
   const navigation = useNavigation();
   const onPressGoBack = () => {
-    navigation.goBack();
+    const canGoBack = navigation.canGoBack()
+    console_log("canGoBack:::", canGoBack)
+    if(canGoBack) {
+      navigation.goBack();
+    } 
   }
 
   return (
@@ -41,7 +46,7 @@ const MyScreenHeader = (props) => {
         {
           (headerType === "3") && (
             <>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => { onPressGoBack() }}>
                 <Image source={require('../../assets/images/icons/arrow_left.png')} style={CustomStyle.iconBackArrow} alt="back" resizeMode="contain" />
               </TouchableOpacity>
               <View>
@@ -51,7 +56,7 @@ const MyScreenHeader = (props) => {
             </>
           )
         }
-         {
+        {
           (headerType === "4") && (
             <>
               <View></View>

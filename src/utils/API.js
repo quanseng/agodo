@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
-import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister } from './API_URL';
+import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUserGetProfile, urlUserUpdateProfile } from './API_URL';
 import { console_log } from './Misc';
 
 export const MULTIPART_HEADER = {
@@ -99,7 +99,7 @@ export const apiRegisterUser = async (payload = null) => {
         formData.append(k, payload[k])
       }
     }
-    if(payload['front']) {
+    if (payload['front']) {
       let selectedImage = payload['front']
       formData.append('id_front', {
         name: selectedImage.fileName,
@@ -108,7 +108,7 @@ export const apiRegisterUser = async (payload = null) => {
       });
     }
 
-    if(payload['back']) {
+    if (payload['back']) {
       let selectedImage = payload['back']
       formData.append('id_back', {
         name: selectedImage.fileName,
@@ -127,3 +127,40 @@ export const apiRegisterUser = async (payload = null) => {
   }
 }
 
+export const apiUserGetProfile = async (payload = null) => {
+  try {
+    const res = await axios.get(urlUserGetProfile);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}
+
+export const apiUserUpdateProfile = async (payload = null) => {
+  try {
+    const formData = new FormData();
+    for (let k in payload) {
+      if (k !== "avatar") {
+        formData.append(k, payload[k])
+      }
+    }
+    if (payload['avatar']) {
+      let selectedImage = payload['avatar']
+      formData.append('avatar', {
+        name: selectedImage.fileName,
+        type: selectedImage.type,
+        uri: Platform.OS === 'android' ? selectedImage.uri : selectedImage.uri.replace('file://', ''),
+      });
+    }
+    const res = await axios.post(urlUserUpdateProfile, formData, MULTIPART_HEADER);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}

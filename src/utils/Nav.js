@@ -1,3 +1,4 @@
+import { ROUTE_SIGNUP } from "../routes/RouteNames"
 import { console_log } from "./Misc"
 
 export const getRouteParams = (routeArr, params, i=1) => {
@@ -37,10 +38,15 @@ export const navReplace = (routeArr, params, navigation) => {
   var routeParams = getRouteParams(routeArr, params)
   navigation.replace(rootRoute, routeParams)
   return true;
-};
+}
 export const navReset = (routeArr, params, navigation) => {
   var rootRoute = routeArr[0]
   var routeParams = getRouteParams(routeArr, params)  
   navigation.reset({ index: 0, routes: [{ name: rootRoute, params:  routeParams }] });
   return true;
-};
+}
+export const navResetLogin = (navigation) => {
+  let routeArr = [ROUTE_SIGNUP]
+  navReset(routeArr, {}, navigation)
+  return true
+}

@@ -26,6 +26,7 @@ export default MyTabBar = (props) => {
     }
     return tabTitle
   }
+
   const getTabIconUri = (tabRouteName, isFocused) => {
     let tabIconUri = ""
     if (tabRouteName === ROUTE_HOME_TAB) {
@@ -35,11 +36,11 @@ export default MyTabBar = (props) => {
     } else if (tabRouteName === ROUTE_HISTORY_TAB) {
       tabIconUri = isFocused ? require("../../assets/images/tab_icon/tab_icon_history_active.png") : require("../../assets/images/tab_icon/tab_icon_history.png")
     } else if (tabRouteName === ROUTE_SETTING_TAB) {
-      tabIconUri =isFocused ? require("../../assets/images/tab_icon/tab_icon_setting_active.png") : require("../../assets/images/tab_icon/tab_icon_setting.png")
+      tabIconUri = isFocused ? require("../../assets/images/tab_icon/tab_icon_setting_active.png") : require("../../assets/images/tab_icon/tab_icon_setting.png")
     }
     return tabIconUri
   }
-  
+
   const onPressTab = (route, index) => {
     const isFocused = state.index === index;
     const event = navigation.emit({

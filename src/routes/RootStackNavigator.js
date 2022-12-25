@@ -30,6 +30,7 @@ import LocationEnableScreen from '../screens/user/LocationEnableScreen';
 import RgRegPersonalScreen from '../screens/auth/RgRegPersonalScreen';
 import RgRegIdScreen from '../screens/auth/RgRegIdScreen';
 import RgRegVehicleScreen from '../screens/auth/RgRegVehicleScreen';
+import ProfileScreen from '../screens/user/ProfileScreen';
 
 const WhiteTheme = {
   ...DefaultTheme,
@@ -46,7 +47,7 @@ const RootStackNavigator = () => {
   return (
     <NavigationContainer theme={WhiteTheme}>
       <Stack.Navigator
-        initialRouteName={ROUTE_INTRODUCTION} //ROUTE_TEST, ROUTE_TEST1, ROUTE_USER_TAB_NAVIGATOR, ROUTE_INTRODUCTION
+        initialRouteName={ROUTE_INTRODUCTION} //ROUTE_TEST, ROUTE_TEST1, ROUTE_USER_TAB_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_LOCATION_ENABLE
         screenOptions={{
           presentation: "card", //modal, card, transparentModal
           headerMode: "screen",
@@ -74,7 +75,7 @@ const RootStackNavigator = () => {
         />
         <Stack.Screen
           name={ROUTE_TEST1}
-          component={Test1Screen}
+          component={ProfileScreen}
           options={{
             headerShown: false
           }}
@@ -182,16 +183,16 @@ const RootStackNavigator = () => {
           }}
         />
         <Stack.Screen
-          name={ROUTE_WELCOME}
-          component={WelcomeScreen}
+          name={ROUTE_LOCATION_ENABLE}
+          component={LocationEnableScreen}
           options={{
             headerShown: false
           }}
         />
 
         <Stack.Screen
-          name={ROUTE_LOCATION_ENABLE}
-          component={LocationEnableScreen}
+          name={ROUTE_WELCOME}
+          component={WelcomeScreen}
           options={{
             headerShown: false
           }}
@@ -203,7 +204,7 @@ const RootStackNavigator = () => {
             headerShown: false
           }}
         />
-        
+
         <Stack.Screen
           name={ROUTE_USER_TAB_NAVIGATOR}
           component={UserTabNavigator}

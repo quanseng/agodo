@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { ScrollView, ImageBackground, Image, StatusBar, View, Text, TouchableOpacity } from 'react-native';
 
 import styles from './styles';
-import { ROUTE_SIGNUP } from '../../../routes/RouteNames';
+import { ROUTE_HOME_TAB, ROUTE_MAP, ROUTE_PROFILE, ROUTE_SETTING_TAB, ROUTE_SIGNUP, ROUTE_USER_TAB_NAVIGATOR } from '../../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../../utils/Misc';
 import { useState } from 'react';
@@ -14,40 +14,40 @@ import MyTextInput from '../../../components/MyTextInput';
 import { COLOR } from '../../../utils/Constants';
 import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import { setLightStatusBarStyle } from '../../../utils/Utils';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { navReset } from '../../../utils/Nav';
 
 const HomeScreen = (props) => {
   const { navigation } = props;
+  const { signed, user } = useSelector(state => state.auth);
+  console_log("HomeScreen signed, user:::", signed, user)
 
   useFocusEffect(
     React.useCallback(() => {
       setLightStatusBarStyle(StatusBar)
     }, [])
-  );
+  )
 
-  const sliderRef = useRef(null)
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-  const [slideTimestamp, setSlideTimestamp] = useState(0)
-
-  const onSlideChange = (index, lastIndex) => {
-    console_log("index, lastIndex:::", index, lastIndex)
-    setCurrentSlideIndex(index)
-    setSlideTimestamp(get_utc_timestamp_ms())
-  }
-
-  const gotoSignUpPage = () => {
-    console_log("gotoLoginPage::::")
-    navigation.replace(ROUTE_SIGNUP);
-  }
-
-
-  const onPressNext = () => {
-    console_log("onDone::::")
-    gotoSignUpPage();
-  }
+  useEffect(() => {
+    if (signed && user['token']) {
+      // continue
+    } else {
+      let routeArr = [ROUTE_SIGNUP]
+      navReset(routeArr, {}, navigation)
+    }
+  }, [signed, user])
 
   const [tabUri, setTabUri] = useState('home')
-  const onPressTabUri = (uri)=>{
+  const onPressTabUri = (uri) => {
     setTabUri(uri)
+    if (uri === 'home') {
+      let routeArr = [ROUTE_USER_TAB_NAVIGATOR, ROUTE_HOME_TAB, ROUTE_MAP]
+      navReset(routeArr, {}, navigation)
+    } else {
+      let routeArr = [ROUTE_USER_TAB_NAVIGATOR, ROUTE_SETTING_TAB, ROUTE_PROFILE]
+      navReset(routeArr, {}, navigation)
+    }
   }
 
   return (
@@ -65,11 +65,21 @@ const HomeScreen = (props) => {
           </View>
           <View style={[BaseStyle.col12]}>
             <View style={[CustomStyle.avatarWrapper]}>
-              <Image source={require('../../../assets/images/data/avatar.png')} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+              {
+                (user['avatar_url']) ? (
+                  <>
+                    <Image source={{ uri: user['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                  </>
+                ) : (
+                  <>
+                    <Image source={require('../../../assets/images/data/avatar-placeholder.png')} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                  </>
+                )
+              }
             </View>
             <View style={[styles.welcomeTextWrapper]}>
               <Text style={[BaseStyle.textLg1, BaseStyle.textSemiBold, BaseStyle.textBlack, BaseStyle.textCenter]}>
-                Hi, John Smith
+                {`Hi, ${user['first_name']} ${user['last_name']}`}
               </Text>
             </View>
           </View>
@@ -152,12 +162,12 @@ const HomeScreen = (props) => {
                       </View>
                     </View>
                   </View>
-
                 </View>
               </View>
             </View>
           </View>
         </View>
+
       </ScrollView>
     </ImageBackground>
   )

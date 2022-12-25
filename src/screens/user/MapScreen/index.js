@@ -17,41 +17,10 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER
 import MyImageSourceModal from '../../../components/MyImageSourceModal';
 import MyBottomSheet from '../../../components/MyBottomSheet';
 import { setDarkStatusBarStyle } from '../../../utils/Utils';
+import MyScreenHeader from '../../../components/MyScreenHeader';
 
 const MapScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setDarkStatusBarStyle(StatusBar)
-    }, [])
-  );
-
-  const sliderRef = useRef(null)
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0)
-  const [slideTimestamp, setSlideTimestamp] = useState(0)
-
-  const onSlideChange = (index, lastIndex) => {
-    console_log("index, lastIndex:::", index, lastIndex)
-    setCurrentSlideIndex(index)
-    setSlideTimestamp(get_utc_timestamp_ms())
-  }
-
-  const gotoSignUpPage = () => {
-    console_log("gotoLoginPage::::")
-    navigation.replace(ROUTE_SIGNUP);
-  }
-
-
-  const onPressNext = () => {
-    console_log("onDone::::")
-    gotoSignUpPage();
-  }
-
-  const [tabUri, setTabUri] = useState('home')
-  const onPressTabUri = (uri) => {
-    setTabUri(uri)
-  }
 
   const [visibleSearchChargerModal, setVisibleSearchChargerModal] = useState(false)
 
@@ -84,7 +53,6 @@ const MapScreen = (props) => {
         </TouchableOpacity>
 
       </View>
-
       {
         (visibleSearchChargerModal) && (
           <MyBottomSheet

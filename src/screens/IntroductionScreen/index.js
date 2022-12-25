@@ -9,7 +9,7 @@ import ResponsiveImageView from 'react-native-responsive-image-view';
 import BaseStyle from '../../styles/BaseStyle';
 import styles from './styles';
 import logoWhite from "../../assets/images/logo_text_white.png";
-import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_SIGNIN, ROUTE_SIGNUP, ROUTE_WELCOME } from '../../routes/RouteNames';
+import { ROUTE_AUTH_STACK_NAVIGATOR, ROUTE_LOCATION_ENABLE, ROUTE_SIGNIN, ROUTE_SIGNUP, ROUTE_WELCOME } from '../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../utils/Misc';
 import { useState } from 'react';
@@ -56,11 +56,13 @@ const IntroductionScreen = (props) => {
   );
 
   useEffect(() => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: ROUTE_WELCOME }]
-    })
-
+    if (signed && user.token) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: ROUTE_WELCOME }] //ROUTE_LOCATION_ENABLE, ROUTE_WELCOME
+      })
+ 
+    }
   }, [signed, user])
 
 

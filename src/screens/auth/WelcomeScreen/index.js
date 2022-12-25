@@ -12,6 +12,8 @@ import BaseStyle from '../../../styles/BaseStyle';
 import MyButton from '../../../components/MyButton';
 import { setLightStatusBarStyle } from '../../../utils/Utils';
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { navReset } from '../../../utils/Nav';
 
 const WelcomeScreen = (props) => {
   const { navigation } = props;
@@ -25,16 +27,19 @@ const WelcomeScreen = (props) => {
     }, [])
   );
 
+  useEffect(() => {
+    if (signed && user['token']) {
+      // continue
+    } else {
+      let routeArr = [ROUTE_SIGNUP]
+      navReset(routeArr, {}, navigation)
+    }
+  }, [signed, user])
+
   const onPressNext = () => {
     console_log("onPressNext::::")
-    resetAndNavigate()
-  }
-
-  const resetAndNavigate = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: ROUTE_HOME }]
-    })
+    let routeArr = [ROUTE_HOME]
+    navReset(routeArr, {}, navigation)
   }
 
   return (
@@ -56,14 +61,24 @@ const WelcomeScreen = (props) => {
         </View>
         <View style={[BaseStyle.flex, BaseStyle.col12]}>
           <View style={[CustomStyle.avatarWrapper]}>
-            <Image source={require('../../../assets/images/data/avatar.png')} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+            {
+              (user['avatar_url']) ? (
+                <>
+                  <Image source={{ uri: user['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                </>
+              ) : (
+                <>
+                  <Image source={require('../../../assets/images/data/avatar-placeholder.png')} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                </>
+              )
+            }
           </View>
         </View>
         <View style={[BaseStyle.flex, BaseStyle.col12]}>
           <View style={[styles.footerWapper]}>
             <View style={[styles.welcomeTextWrapper]}>
               <Text style={[BaseStyle.textLg, BaseStyle.textSemiBold, BaseStyle.textBlack, BaseStyle.textCenter]}>
-                Hi, John Smith
+                {`Hi, ${user['first_name']} ${user['last_name']}`}
               </Text>
             </View>
             <View style={[CustomStyle.formControl]}>

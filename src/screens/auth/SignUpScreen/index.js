@@ -18,6 +18,7 @@ import { Indicator } from '../../../components/Indicator';
 import { checkApiIsLoading, endApiLoading, setDarkStatusBarStyle, showToast, startApiLoading } from '../../../utils/Utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageData } from '../../../redux/data/actions';
+import { signOut } from '../../../redux/auth/actions';
 
 const SignUpScreen = (props) => {
   const { navigation } = props;
@@ -46,9 +47,13 @@ const SignUpScreen = (props) => {
   console_log("Signup screen authData:::", authData)
 
   useEffect(() => {
+    clearSession()
     loadScreenData();
   }, []);
 
+  const clearSession = () => {
+    dispatch(signOut());
+  }
   const loadScreenData = async () => {
     const apiKey = "apiGetAllStates";
     if (checkApiIsLoading(apiKey, STATIC_VALUES)) {

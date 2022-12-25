@@ -1,117 +1,269 @@
-import React, { useState } from 'react';
-import { SafeAreaView, Image, StatusBar, View, Text, ScrollView } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { requestMultiple, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
-import styles from './styles';
-import { useFocusEffect } from '@react-navigation/native';
 import CustomStyle from '../../../styles/CustomStyle';
 import BaseStyle from '../../../styles/BaseStyle';
-import { console_log, isEmpty } from '../../../utils/Misc';
-import MyTextInput from '../../../components/MyTextInput';
-import DropDown from 'react-native-paper-dropdown';
-import { PaperSelect } from 'react-native-paper-select';
+import { console_log, empty, validateEmail } from '../../../utils/Misc';
 
-import { COLOR } from '../../../utils/Constants';
-import MyDropdown from '../../../components/MyDropdown';
 import { TextInput } from 'react-native-paper';
-import { Button } from 'react-native-paper';
 import MyButton from '../../../components/MyButton';
+import MyTextInput from '../../../components/MyTextInput';
 import TextInputMask from 'react-native-text-input-mask';
-import { ROUTE_EV_REG_ID } from '../../../routes/RouteNames';
+
+import { ROUTE_EV_REG_CHARGER, ROUTE_SIGNUP, ROUTE_TERMS_CONDITION } from '../../../routes/RouteNames';
 import MyScreenHeader from '../../../components/MyScreenHeader';
-import StepIndicator from 'react-native-step-indicator';
 import AuthStyle from '../../../styles/AuthStyle';
 import MyStepIndicator from '../../../components/MyStepIndicator';
-import { setDarkStatusBarStyle } from '../../../utils/Utils';
+import MyUploadBox from '../../../components/MyUploadBox';
+import MyImageSourceModal from '../../../components/MyImageSourceModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPageData } from '../../../redux/data/actions';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import MyAvatarBox from '../../../components/MyAvatarBox';
+import { useEffect } from 'react';
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+import { checkApiIsLoading, endApiLoading, showCarema, showImageLibrary, showToast, startApiLoading } from '../../../utils/Utils';
+import { apiGetAllStates, apiLoginRequired, apiResponseIsSuccess, apiUserGetProfile, apiUserUpdateProfile } from '../../../utils/API';
+import { navReset, navResetLogin } from '../../../utils/Nav';
+import { Indicator } from '../../../components/Indicator';
+import { setUser } from '../../../redux/auth/actions';
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const ProfileScreen = (props) => {
   const { navigation } = props;
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+  const { signed, user } = useSelector(state => state.auth);
+  const [imageSide, setImageSide] = useState("avatar");
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setDarkStatusBarStyle(StatusBar)
-    }, [])
-  );
+  useEffect(() => {
+    if(signed){
+      setFormData({ ...user, avatar: null })
+    }
+
+    callApiGetScreenData()
+  }, [user])
+
+  const callApiGetScreenData = async () => {
+    const apiKey = "apiUserGetProfile";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false;
+    }
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    const response = await apiUserGetProfile();
+    console_log("apiUserGetProfile response:::", response)
+    if (apiResponseIsSuccess(response)) {
+      let userInfo = response['data']['user']
+      setFormData({ ...userInfo, avatar: null })
+    } else {
+      if (apiLoginRequired(response)) {
+        navResetLogin(navigation)
+      } else {
+        showToast({ message: response.message })
+      }
+    }
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
+  }
 
   const defaultFormData = {
-    state: "",
-    phone: ""
+    avatar: null
   }
-  const requiredFieldList = ["state", "phone"]
   const [formData, setFormData] = useState(defaultFormData);
-  const [errorField, setErrorField] = useState([]);
-  const onChangeFormField = (field_name, field_value) => {
-    //console_log("field_name, field_value", field_name, field_value)
+  const onChangeFormFileField = (field_value) => {
+    if (empty(field_value)) {
+      return false;
+    }
     const updatedData = { ...formData }
-    updatedData[field_name] = field_value
-
-    console_log("updatedData:::", updatedData)
-    validateFields(updatedData, field_name)
+    if (!empty(field_value['assets']) && field_value['assets'].length > 0) {
+      updatedData[imageSide] = field_value['assets'][0]
+    }
     setFormData(updatedData)
   }
-  const validateFields = (updatedData = null, field_name = null) => {
-    if (updatedData === null) {
-      updatedData = { ...formData }
-    }
-    var errorList = [...errorField]
-    if (field_name !== null) {
-      if (requiredFieldList.includes(field_name)) {
-        errorList = isEmpty(updatedData, field_name, errorList);
-      }
-    } else {
-      for (let i = 0; i < requiredFieldList.length; i++) {
-        errorList = isEmpty(updatedData, requiredFieldList[i], errorList);
-      }
-    }
-    setErrorField([...errorList]);
-    return errorList
+  const onClearFormFileField = (side) => {
+    const updatedData = { ...formData }
+    updatedData[side] = null;
+    setFormData(updatedData)
+  }
+  const onChangeFormField = (field_name, field_value) => {
+    const updatedData = { ...formData }
+    updatedData[field_name] = field_value
+    console_log("updatedData:::", updatedData)
+    setFormData(updatedData)
   }
 
-  const onPressNext = () => {
-    navigation.navigate(ROUTE_EV_REG_ID)
+  const validateFields = () => {
+    if (formData['first_name'] === "") {
+      showToast({ message: "Please enter your first name" })
+      return false
+    }
+    if (formData['last_name'] === "") {
+      showToast({ message: "Please enter your last name" })
+      return false
+    }
+    if (formData['email'] === "") {
+      showToast({ message: "Please enter your email" })
+      return false
+    } else {
+      if (!validateEmail(formData['email'])) {
+        showToast({ message: "Please enter a valid email" })
+        return false
+      }
+    }
+    if (formData['phone'] === "") {
+      showToast({ message: "Please enter phone number" })
+      return false
+    }
+    return true
   }
-  const [currentPosition, setCurrentPosition] = useState(0);
+
+  const renderPlaceholder = () => {
+    return (
+      <TouchableWithoutFeedback>
+        {
+          (formData['avatar_url']) ? (
+            <>
+              <Image source={{ uri: formData['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+            </>
+          ) : (
+            <>
+              <Image source={require('../../../assets/images/data/avatar-placeholder.png')} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+            </>
+          )
+        }
+      </TouchableWithoutFeedback>
+    )
+  }
+
+  const requestRNPermission = async () => {
+    const result = await requestMultiple([PERMISSIONS.ANDROID.CAMERA, PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE])
+    console_log("result:::::", result)
+    if (result[PERMISSIONS.ANDROID.CAMERA] === RESULTS.GRANTED && result[PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE] === RESULTS.GRANTED) {
+      return true
+    } else {
+      if (result[PERMISSIONS.ANDROID.CAMERA] !== RESULTS.GRANTED) {
+        const uploadResult = await showImageLibrary({ id: imageSide });
+        onChangeFormFileField(uploadResult)
+      }
+      return false
+    }
+  }
+  const openUploadModal = async () => {
+    let permissionResult = await requestRNPermission()
+    console_log("permissionResult:::", permissionResult)
+    if (!permissionResult) {
+      return false;
+    }
+    setVisibleImageTypeModal(true)
+  }
+  const [visibleImageTypeModal, setVisibleImageTypeModal] = useState(false)
+  const setImageSourceType = async (type) => {
+    let uploadResult = null;
+    if (type === 'camera') {
+      uploadResult = await showCarema({ id: imageSide })
+    } else if (type === 'file') {
+      uploadResult = await showImageLibrary({ id: imageSide })
+    }
+    onChangeFormFileField(uploadResult)
+  }
+
+  const onPressSubmit = async () => {
+    const isValid = validateFields()
+    if (!isValid) {
+      return false
+    }
+    const apiKey = "apiUserUpdateProfile";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false;
+    }
+    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    const response = await apiUserUpdateProfile(formData);
+    console_log("apiUserUpdateProfile response:::", response)
+    if (apiResponseIsSuccess(response)) {
+      let userInfo = response['data']['user']
+      setFormData({ ...userInfo, avatar: null })
+      dispatch(setUser(userInfo));
+      showToast({ message: response.message })
+    } else {
+      if (apiLoginRequired(response)) {
+        navResetLogin(navigation)
+      } else {
+        showToast({ message: response.message })
+      }
+    }
+    endApiLoading(apiKey, STATIC_VALUES, setLoading)
+  }
+
   return (
     <SafeAreaView style={[CustomStyle.screenContainer]}>
       <ScrollView style={[AuthStyle.signupScreen]} contentContainerStyle={{ flexGrow: 1 }}>
         <MyScreenHeader
-          headerType="3"
+          headerType="4"
           title="My Profile"
         />
         <View style={[BaseStyle.flex]}>
           <View style={[BaseStyle.flex, AuthStyle.authFormContainer]}>
             <View style={[AuthStyle.authFormWrapper]}>
               <View>
-                <View style={[CustomStyle.avatarWrapper]}>
-                  <Image source={require('../../../assets/images/data/avatar.png')} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                <View style={CustomStyle.formControl}>
+                  <View style={[CustomStyle.avatarWrapper]}>
+                    <MyAvatarBox
+                      placeholder={renderPlaceholder()}
+                      fileData={formData['avatar']}
+                      openUploadModal={() => openUploadModal()}
+                      deleteImage={() => onClearFormFileField('avatar')}
+                    />
+                  </View>
                 </View>
                 <View style={[AuthStyle.authFormBody]}>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
-                      label={`Full Name`}
+                      label={`First Name`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['first_name']}
                       returnKeyType="next"
                       keyboardType="default"
-                      onChangeText={text => onChangeFormField("phone", text)}
+                      onChangeText={text => onChangeFormField("first_name", text)}
                       left={<TextInput.Icon icon={({ size, color }) => (
                         <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       )} />}
                     />
                   </View>
-                  
+                  <View style={CustomStyle.formControl}>
+                    <MyTextInput
+                      label={`Last Name`}
+                      placeholder={``}
+                      value={formData['last_name']}
+                      returnKeyType="next"
+                      keyboardType="default"
+                      onChangeText={text => onChangeFormField("last_name", text)}
+                      left={<TextInput.Icon icon={({ size, color }) => (
+                        <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
+                      )} />}
+                    />
+                  </View>
+
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Email`}
                       placeholder={``}
-                      value={formData['phone']}
+                      value={formData['email']}
                       returnKeyType="next"
                       keyboardType="email-address"
-                      onChangeText={text => onChangeFormField("phone", text)}
+                      onChangeText={text => onChangeFormField("email", text)}
                       left={<TextInput.Icon icon={({ size, color }) => (
                         <Image source={require('../../../assets/images/icons/envelope.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       )} />}
                     />
-                  </View>                
+                  </View>
                   <View style={CustomStyle.formControl}>
                     <MyTextInput
                       label={`Phone number`}
@@ -121,7 +273,7 @@ const ProfileScreen = (props) => {
                       keyboardType="phone-pad"
                       onChangeText={text => onChangeFormField("phone", text)}
                       left={<TextInput.Icon icon={({ size, color }) => (
-                        <Image source={require('../../../assets/images/icons/user.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
+                        <Image source={require('../../../assets/images/flag/flag_us.png')} style={{ width: size, height: size }} alt="flag" resizeMode="contain" />
                       )} />}
                       render={props =>
                         <TextInputMask
@@ -133,18 +285,27 @@ const ProfileScreen = (props) => {
                   </View>
                 </View>
               </View>
-
               <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
-                  <MyButton mode="contained" onPress={() => onPressNext()}>
+                  <MyButton mode="contained" onPress={() => onPressSubmit()}>
                     Update Profile
                   </MyButton>
                 </View>
               </View>
             </View>
           </View>
+
+
         </View>
       </ScrollView>
+
+      <MyImageSourceModal
+        visible={visibleImageTypeModal}
+        setVisible={setVisibleImageTypeModal}
+        setImageSourceType={setImageSourceType}
+      />
+
+      {(loading) && (<Indicator />)}
     </SafeAreaView>
   )
 }

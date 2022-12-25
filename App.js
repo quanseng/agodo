@@ -19,6 +19,7 @@ import { console_log } from './src/utils/Misc';
 // import {
 //   BottomSheetModalProvider,
 // } from '@gorhom/bottom-sheet';
+import MyBackgroundGeolocation from './src/components/MyBackgroundGeolocation';
 
 import { enableLatestRenderer } from 'react-native-maps';
 enableLatestRenderer();
@@ -117,6 +118,7 @@ const App = () => {
             <RootSiblingParent>
               <StatusBar backgroundColor={"transparent"} translucent={true} barStyle="dark-content" />
               <RootStackNavigator />
+              <MyBackgroundGeolocation />
               <Toast />
             </RootSiblingParent>
         </PaperProvider>
