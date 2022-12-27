@@ -14,5 +14,6 @@ export const urlUserUpdateProfile = Config.SERVER_API_URL + url_sub_prefix + "/u
 export const urlUserGetMapData = Config.SERVER_API_URL + url_sub_prefix + "/get-map-data";
 export const urlUserSearchEvList = Config.SERVER_API_URL + url_sub_prefix + "/search-ev-list";
 
+export const urlUserAcceptEv = Config.SERVER_API_URL + url_sub_prefix + "/accept-ev";
 
 

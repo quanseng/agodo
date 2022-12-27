@@ -9,7 +9,7 @@ import axios from "axios";
 import { MD3LightTheme as DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 
 import RootStackNavigator from './src/routes/RootStackNavigator';
-import Toast from 'react-native-toast-message'; // for notification message
+//import Toast from 'react-native-toast-message'; // for notification message
 import { RootSiblingParent } from 'react-native-root-siblings';
 import "./IgnoreWarnings";
 import SplashScreen from "react-native-splash-screen";
@@ -119,7 +119,7 @@ const App = () => {
               <StatusBar backgroundColor={"transparent"} translucent={true} barStyle="dark-content" />
               <RootStackNavigator />
               <MyBackgroundGeolocation />
-              <Toast />
+              {/* <Toast /> */}
             </RootSiblingParent>
         </PaperProvider>
       </PersistGate>

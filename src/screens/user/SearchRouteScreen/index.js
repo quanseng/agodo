@@ -95,12 +95,12 @@ const SearchRouteScreen = (props) => {
       params['start_latitude'] = formData['start_point_details']['geometry']['location']['lat']
       params['end_longitude'] = formData['end_point_details']['geometry']['location']['lng']
       navigation.navigate(ROUTE_MAP, { search_params: params })
-      //callApiUpdateScreenData()
+      //callApiUserSearchEvList()
     } catch (e) {
       showToast("Invalid request")
     }
   }
-  const callApiUpdateScreenData = async (show_loading = true) => {
+  const callApiUserSearchEvList = async (show_loading = true) => {
     const apiKey = "apiUserSearchEvList";
     if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
       return false;

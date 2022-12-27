@@ -21,7 +21,7 @@ import MyScreenHeader from '../../../components/MyScreenHeader';
 import { useDispatch, useSelector } from 'react-redux';
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 import { checkApiIsLoading, endApiLoading, showCarema, showImageLibrary, showToast, startApiLoading } from '../../../utils/Utils';
-import { apiLoginRequired, apiResponseIsSuccess, apiUserGetMapData } from '../../../utils/API';
+import { apiLoginRequired, apiResponseIsSuccess, apiUserAcceptEv, apiUserGetMapData, apiUserSearchEvList } from '../../../utils/API';
 import { navReset, navResetLogin } from '../../../utils/Nav';
 import { Indicator } from '../../../components/Indicator';
 import { setUser } from '../../../redux/auth/actions';
@@ -34,7 +34,10 @@ import { useEffect } from 'react';
 const MapScreen = (props) => {
   const { navigation, route } = props;
   console_log("route.params:::", route.params)
-  const { search_params } = route.params;
+  let search_params = null
+  if(route.params) {
+    search_params = route.params.search_params
+  }
   console_log("search_params:::", search_params)
 
   const dispatch = useDispatch();
@@ -50,15 +53,71 @@ const MapScreen = (props) => {
   const { latitude, longitude } = useSelector(state => state.auth.user);
   console_log("Map page latitude, longitude:::", latitude, longitude)
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if(search_params){
-        callApiGetScreenData(false)
-      }else{
-        
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     if (search_params) {
+  //       // nothing to od
+  //     } else {
+  //       callApiGetScreenData(false)
+  //     }
+  //   }, [])
+  // )
+
+  useEffect(() => {
+    if (search_params) {
+      callApiUserSearchEvList(false)
+    } else {
+      callApiGetScreenData(false)
+    }
+  }, [search_params])
+
+  const [searchedEvList, setSearchedEvList] = useState([]);
+
+  const callApiUserSearchEvList = async (show_loading = true) => {
+    setSearching(true);
+    const apiKey = "apiUserSearchEvList";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false;
+    }
+    if (show_loading) {
+      startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    }
+    const response = await apiUserSearchEvList(search_params);
+    console_log("apiUserSearchEvList response:::", response)
+    if (show_loading) {
+      endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    }
+
+    if (apiResponseIsSuccess(response)) {
+      setTimeout(() => {
+        processSearchResult(response)
+      }, 1500)
+    } else {
+      setSearching(false);
+      if (apiLoginRequired(response)) {
+        navResetLogin(navigation)
+      } else {
+        showToast({ message: response.message })
       }
-    }, [])
-  )
+    }
+    return true
+  }
+
+  const processSearchResult = (response)=>{
+    setSearching(false);
+
+    let userInfo = response['data']['user']
+    dispatch(setUser(userInfo));
+    let ev_list = response['data']['ev_list']
+    setSearchedEvList(ev_list)
+    if (ev_list.length > 0) {
+      setCurrentEv(ev_list[0])
+      setVisibleAcceptEvModal(true)
+    } else {
+      setCurrentEv(null)
+      setVisibleAcceptEvModal(false)
+    }
+  }
 
   const defaultFormData = {
     ev_list: []
@@ -94,7 +153,6 @@ const MapScreen = (props) => {
   }
 
   const [visibleSearchChargerModal, setVisibleSearchChargerModal] = useState(false)
-
   const onPressSarch = () => {
     console_log("chargerType:::", chargerType)
     if (chargerType === SEARCH_TYPE.AT_MY_LOCATION) {
@@ -109,7 +167,6 @@ const MapScreen = (props) => {
 
     setVisibleSearchChargerModal(false);
   }
-
   const getMyLocation = () => {
     const userLocation = {
       latitude: (latitude ? latitude : DEFAULT_LOCATION.LATITUDE),
@@ -117,8 +174,52 @@ const MapScreen = (props) => {
     }
     return userLocation
   }
-
   const [chargerType, setChargerType] = useState(SEARCH_TYPE.AT_MY_LOCATION)
+
+  const [searching, setSearching] = useState(false)
+  const onPressCancelSearch = () => {
+    setSearching(false)
+    navigation.setParams({ search_params: null });
+  }
+
+  const [currentEv, setCurrentEv] = useState(null)
+  const [currentEvAccepted, setCurrentEvAccepted] = useState(false)
+
+  const onPressAcceptEv = (flag) => {
+    if(flag){
+      callApiAcceptEv()
+    }else{
+      setCurrentEv(null)
+    }
+    setVisibleAcceptEvModal(false)
+  }
+
+  const callApiAcceptEv = async (show_loading = true) => {
+    const apiKey = "apiUserAcceptEv";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false;
+    }
+    if (show_loading) {
+      startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    }
+    const response = await apiUserAcceptEv({...currentEv});
+    if (show_loading) {
+      endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    }
+    if (apiResponseIsSuccess(response)) {
+      let userInfo = response['data']['user']
+      setCurrentEv(null)
+    } else {
+      if (apiLoginRequired(response)) {
+        navResetLogin(navigation)
+      } else {
+        showToast({ message: response.message })
+      }
+    }
+  }
+
+  const [visibleAcceptEvModal, setVisibleAcceptEvModal] = useState(false)
+
 
   return (
     <View style={[CustomStyle.screenContainer]}>
@@ -197,7 +298,67 @@ const MapScreen = (props) => {
           </MyBottomSheet>
         )
       }
+
+      {
+        (searching) && (
+          <MyBottomSheet
+            height={230}
+            visible={searching}
+            setVisible={setSearching}
+          >
+            <View style={[BaseStyle.col12, BaseStyle.flex]}>
+              <View style={[CustomStyle.formControl, styles.searchingPlaceBox]}>
+                <Text style={[BaseStyle.textBlack, BaseStyle.textCenter, BaseStyle.textMd1]}>Searching for charging source...</Text>
+              </View>
+
+              <View style={[styles.searchBtnBox]}>
+                <View style={[BaseStyle.rowCenter]}>
+                  <MyButton mode="contained" style={CustomStyle.buttonPrimary} onPress={() => onPressCancelSearch()}>
+                    Cancel
+                  </MyButton>
+                </View>
+              </View>
+            </View>
+          </MyBottomSheet>
+        )
+      }
+
+      {
+        (visibleAcceptEvModal) && (
+          <MyBottomSheet
+            height={260}
+            visible={visibleAcceptEvModal}
+            setVisible={setVisibleAcceptEvModal}
+          >
+            <View style={[BaseStyle.col12, BaseStyle.flex]}>
+              <View style={[CustomStyle.formControl]}>
+                <Text style={[BaseStyle.textBlack, BaseStyle.textCenter, BaseStyle.textMd1]}>Charging source found</Text>
+              </View>
+              <View style={[CustomStyle.formControl, styles.searchingPlaceBox]}>
+                <Text style={[BaseStyle.textBlack, BaseStyle.textCenter, BaseStyle.textMd1]}>
+                  Tesla Model X charger plug
+                  Universal Plug Available
+                  Arrive in 2min, 0.8miles
+                </Text>
+              </View>
+
+              <View style={[styles.searchBtnBox]}>
+                <View style={[BaseStyle.rowCenter]}>
+                  <MyButton mode="contained" style={CustomStyle.buttonPrimary} onPress={() => onPressAcceptEv(true)}>
+                    Accept
+                  </MyButton>
+                  <MyButton mode="text" style={CustomStyle.buttonPrimary} onPress={() => onPressAcceptEv(false)}>
+                    Reject
+                  </MyButton>
+                </View>
+              </View>
+            </View>
+          </MyBottomSheet>
+        )
+      }
+
       {(loading) && (<Indicator />)}
+
     </View>
   )
 }

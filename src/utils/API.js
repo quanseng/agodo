@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
-import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUserGetMapData, urlUserGetProfile, urlUserSearchEvList, urlUserUpdateProfile } from './API_URL';
+import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUserAcceptEv, urlUserGetMapData, urlUserGetProfile, urlUserSearchEvList, urlUserUpdateProfile } from './API_URL';
 import { console_log } from './Misc';
 
 export const MULTIPART_HEADER = {
   headers: {
+    "Accept":"application/json, text/plain, /",
     "Content-Type": "multipart/form-data",
   }
 }
@@ -141,9 +142,10 @@ export const apiUserGetProfile = async (payload = null) => {
 
 export const apiUserUpdateProfile = async (payload = null) => {
   try {
+    const post_fields = ["first_name", "last_name", "email", "phone"];
     const formData = new FormData();
     for (let k in payload) {
-      if (k !== "avatar") {
+      if (post_fields.includes(k)) {
         formData.append(k, payload[k])
       }
     }
@@ -155,13 +157,15 @@ export const apiUserUpdateProfile = async (payload = null) => {
         uri: Platform.OS === 'android' ? selectedImage.uri : selectedImage.uri.replace('file://', ''),
       });
     }
+    console_log("apiUserUpdateProfile payload ::::::", payload)
+    console_log("apiUserUpdateProfile formData ::::::", formData)
     const res = await axios.post(urlUserUpdateProfile, formData, MULTIPART_HEADER);
+
+    console_log("res::::::", res)
     return res.data;
   } catch (error) {
-    if (error.response) {
-      return error.response.data
-    }
-    return error;
+     console_log("error:::::::::::", error)
+    return false;
   }
 }
 
@@ -182,9 +186,25 @@ export const apiUserSearchEvList = async (payload = null) => {
     const formData = new FormData();
     formData.append('start_point', payload['start_point'])
     formData.append('end_point', payload['end_point'])
-    formData.append('start_latitude', payload['start_point_details']['geometry']['location']['lat'])
-    formData.append('end_longitude', payload['end_point_details']['geometry']['location']['lng'])    
+    formData.append('start_latitude', payload['start_latitude'])
+    formData.append('end_longitude', payload['end_longitude'])    
     const res = await axios.post(urlUserSearchEvList, formData, MULTIPART_HEADER);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}
+
+export const apiUserAcceptEv = async (payload = null) => {
+  try {
+    const formData = new FormData();
+    for (let k in payload) {
+      formData.append(k, payload[k])
+    }
+    const res = await axios.post(urlUserAcceptEv, formData, MULTIPART_HEADER);
     return res.data;
   } catch (error) {
     if (error.response) {

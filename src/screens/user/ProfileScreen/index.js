@@ -68,6 +68,7 @@ const ProfileScreen = (props) => {
     if (apiResponseIsSuccess(response)) {
       let userInfo = response['data']['user']
       setFormData({ ...userInfo, avatar: null })
+      dispatch(setUser(userInfo));
     } else {
       if (apiLoginRequired(response)) {
         navResetLogin(navigation)

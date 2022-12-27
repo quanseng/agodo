@@ -60,5 +60,5 @@ export const DEFAULT_LOCATION = {
   RADIUS: 0.05
 }
 
-export const GOOGLE_MAP_API_KEY = "AIzaSyCn1yAZPLMnOpjCb8zCd6ZVCiW-_bZCstA"
+export const GOOGLE_MAP_API_KEY = ""
 
