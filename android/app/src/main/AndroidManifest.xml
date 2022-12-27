@@ -36,7 +36,7 @@
        <!-- You will only need to add this meta-data tag, but make sure it's a child of application -->
       <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value=""/>
+        android:value="TEST_KET"/>
 
       <meta-data
           android:name="com.google.android.gms.version"
