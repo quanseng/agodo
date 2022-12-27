@@ -49,4 +49,16 @@ export const PAYMENT_METHOD = {
   PAYPAL: 'paypal',
   GOOGLE_PAY: 'google_pay'
 }
+export const SEARCH_TYPE = {
+  AT_MY_LOCATION: 'my_location',
+  ON_MY_ROUTE: 'my_route',
+  AT_MY_DESTINATION: 'my_destination'
+}
+export const DEFAULT_LOCATION = {
+  LATITUDE: 18.0112991,
+  LONGITUDE: 102.6297989,
+  RADIUS: 0.05
+}
+
+export const GOOGLE_MAP_API_KEY = "AIzaSyCn1yAZPLMnOpjCb8zCd6ZVCiW-_bZCstA"
 

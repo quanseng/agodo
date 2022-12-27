@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { ScrollView, ImageBackground, Image, StatusBar, View, Text, TouchableOpacity } from 'react-native';
 import BaseStyle from '../../styles/BaseStyle';
-import { COLOR, SIZE } from '../../utils/Constants';
+import { COLOR, SEARCH_TYPE, SIZE } from '../../utils/Constants';
 import styles from './styles';
 
 const ChargerTypeList = [
   {
     'label': `at my${"\n"}location`,
-    'value': 'my_location'
+    'value': SEARCH_TYPE.AT_MY_LOCATION
   },
   {
     'label': `on my${"\n"}route`,
-    'value': 'my_route'
+    'value': SEARCH_TYPE.ON_MY_ROUTE
   },
   {
     'label': `at my${"\n"}destination`,
-    'value': 'my_destination'
+    'value': SEARCH_TYPE.AT_MY_DESTINATION
   },
 ]
 const MySearchChargerBox = (props) => {
-  const [chargerType, setChargerType] = useState('my_location')
+  const {chargerType, setChargerType} = props
   const onPressItem = (item_type) =>{
     setChargerType(item_type);
   }

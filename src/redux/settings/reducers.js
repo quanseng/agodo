@@ -13,6 +13,10 @@ export default function settingsReducer(state = rawState, action) {
         ...state,
         ...action.payload
       }
+    case types.CLEAR_SETTING:
+      return {
+        ...rawState
+      }
     default:
       return state;
   }

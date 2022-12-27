@@ -49,8 +49,6 @@ const DrawerMenu = ({ title, icon, opacity, handleMenu }) => {
 
 const DrawerMenuList = (props) => {
   const { navigation } = props;
-  //const user = useSelector(state => state.auth.user);
-  //const deviceToken = useSelector(state => state.settings.deviceToken);
 
   const dispatch = useDispatch();
 

@@ -45,7 +45,10 @@ export const ROUTE_UPDATE_PASSWORD = "UpdatePassword";
 export const ROUTE_LOCATION_ENABLE = "LocationEnable";
 export const ROUTE_HOME = "Home";
 export const ROUTE_MAP = "Map";
+export const ROUTE_AT_MY_LOCATION = "AtMyLocation";
 export const ROUTE_ON_MY_ROUTE = "OnMyRoute";
+export const ROUTE_AT_MY_DESTINATION = "AtMyDestination";
+
 export const ROUTE_CHARGING = "Charging";
 export const ROUTE_CHARGE_HISTORY = "ChargeHistory";
 export const ROUTE_CHARGE_DETAIL = "ChargeDetail";

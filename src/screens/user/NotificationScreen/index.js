@@ -12,18 +12,11 @@ import MyButton from '../../../components/MyButton';
 import { TextInput } from 'react-native-paper';
 import MyTextInput from '../../../components/MyTextInput';
 import { COLOR } from '../../../utils/Constants';
-import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import MyScreenHeader from '../../../components/MyScreenHeader';
 import { setDarkStatusBarStyle } from '../../../utils/Utils';
 
 const NotificationScreen = (props) => {
   const { navigation } = props;
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setDarkStatusBarStyle(StatusBar)
-    }, [])
-  );
 
   const sliderRef = useRef(null)
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0)

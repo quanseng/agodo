@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
-import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUserGetProfile, urlUserUpdateProfile } from './API_URL';
+import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUserGetMapData, urlUserGetProfile, urlUserSearchEvList, urlUserUpdateProfile } from './API_URL';
 import { console_log } from './Misc';
 
 export const MULTIPART_HEADER = {
@@ -156,6 +156,35 @@ export const apiUserUpdateProfile = async (payload = null) => {
       });
     }
     const res = await axios.post(urlUserUpdateProfile, formData, MULTIPART_HEADER);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}
+
+export const apiUserGetMapData = async (payload = null) => {
+  try {
+    const res = await axios.get(urlUserGetMapData);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}
+
+export const apiUserSearchEvList = async (payload = null) => {
+  try {
+    const formData = new FormData();
+    formData.append('start_point', payload['start_point'])
+    formData.append('end_point', payload['end_point'])
+    formData.append('start_latitude', payload['start_point_details']['geometry']['location']['lat'])
+    formData.append('end_longitude', payload['end_point_details']['geometry']['location']['lng'])    
+    const res = await axios.post(urlUserSearchEvList, formData, MULTIPART_HEADER);
     return res.data;
   } catch (error) {
     if (error.response) {

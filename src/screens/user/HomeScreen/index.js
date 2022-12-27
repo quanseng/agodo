@@ -11,7 +11,7 @@ import BaseStyle from '../../../styles/BaseStyle';
 import MyButton from '../../../components/MyButton';
 import { TextInput } from 'react-native-paper';
 import MyTextInput from '../../../components/MyTextInput';
-import { COLOR } from '../../../utils/Constants';
+import { COLOR, SEARCH_TYPE } from '../../../utils/Constants';
 import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import { setLightStatusBarStyle } from '../../../utils/Utils';
 import { useSelector } from 'react-redux';
@@ -49,6 +49,8 @@ const HomeScreen = (props) => {
       navReset(routeArr, {}, navigation)
     }
   }
+
+  const [chargerType, setChargerType] = useState(SEARCH_TYPE.AT_MY_LOCATION)
 
   return (
     <ImageBackground style={[CustomStyle.screenContainer]} source={require('../../../assets/images/data/home_bg.png')}>
@@ -110,6 +112,8 @@ const HomeScreen = (props) => {
             </View>
             <View style={[CustomStyle.formControl]}>
               <MySearchChargerBox
+                chargerType={chargerType}
+                setChargerType={setChargerType}
               />
             </View>
             <View style={[CustomStyle.formControl]}>

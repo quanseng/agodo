@@ -11,6 +11,8 @@ url_sub_prefix = "/user"
 export const urlUpdateLocation = Config.SERVER_API_URL + url_sub_prefix + "/update-location";
 export const urlUserGetProfile = Config.SERVER_API_URL + url_sub_prefix + "/get-profile";
 export const urlUserUpdateProfile = Config.SERVER_API_URL + url_sub_prefix + "/update-profile";
+export const urlUserGetMapData = Config.SERVER_API_URL + url_sub_prefix + "/get-map-data";
+export const urlUserSearchEvList = Config.SERVER_API_URL + url_sub_prefix + "/search-ev-list";
 
 
 

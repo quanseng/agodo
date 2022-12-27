@@ -9,23 +9,10 @@ import { console_log } from '../../utils/Misc';
 import { SafeAreaView } from 'react-navigation';
 
 const SplashScreen = (props) => {
-
   const { navigation } = props;
-
   const dispatch = useDispatch();
   useEffect(() => {
-    //gotoIntroScreen();
   }, []);
-
-  const signed = useSelector(state => state.auth.signed);
-  //const user = useSelector(state => state.auth.user);
-  //console_log("user:::", user)
-
-  const gotoIntroScreen = () => {
-    setTimeout(function () {
-      navigation.replace(!signed ? ROUTE_AUTH_STACK_NAVIGATOR : ROUTE_DRAWER_STACK_NAVIGATOR);
-    }, 3500);
-  }
 
   return (
     <SafeAreaView style={BaseStyle.screenContainer}>

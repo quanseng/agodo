@@ -43,11 +43,10 @@ const WhiteTheme = {
 const Stack = createStackNavigator();
 
 const RootStackNavigator = () => {
-  const signed = useSelector(state => state.auth.signed);
   return (
     <NavigationContainer theme={WhiteTheme}>
       <Stack.Navigator
-        initialRouteName={ROUTE_INTRODUCTION} //ROUTE_TEST, ROUTE_TEST1, ROUTE_USER_TAB_NAVIGATOR, ROUTE_INTRODUCTION, ROUTE_LOCATION_ENABLE
+        initialRouteName={ROUTE_INTRODUCTION} //ROUTE_TEST, ROUTE_TEST1, ROUTE_INTRODUCTION, ROUTE_USER_TAB_NAVIGATOR, ROUTE_LOCATION_ENABLE
         screenOptions={{
           presentation: "card", //modal, card, transparentModal
           headerMode: "screen",

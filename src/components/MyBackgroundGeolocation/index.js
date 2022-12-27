@@ -9,15 +9,17 @@ import BackgroundGeolocation, {
   Location,
   Subscription
 } from "react-native-background-geolocation";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '../../redux/auth/actions';
 import { urlUpdateLocation } from '../../utils/API_URL';
 import { console_log, empty } from '../../utils/Misc';
 
 const MyBackgroundGeolocation = (props) => {
   const { debugMode = false } = props
-  const { signed, user } = useSelector(state => state.auth);
+  const dispatch = useDispatch()
+  const { token } = useSelector(state => state.auth.user);
   const { location_enabled } = useSelector(state => state.settings);
-  console_log("location_enabled, signed, user", location_enabled, signed, user)
+  console_log("location_enabled, token", location_enabled, token)
 
   const [enabled, setEnabled] = React.useState(false);
   const [location, setLocation] = React.useState('');
@@ -27,6 +29,15 @@ const MyBackgroundGeolocation = (props) => {
     const onLocation = BackgroundGeolocation.onLocation((location) => {
       console_log('[onLocation]', location);
       setLocation(JSON.stringify(location, null, 2));
+      if(location && location['coords']){
+        if(token) {
+          let locationUpdate = {
+            latitude: location['coords']['latitude'],
+            longitude: location['coords']['longitude'],
+          }
+          dispatch(setUser(locationUpdate))
+        }
+      }
     })
 
     const onMotionChange = BackgroundGeolocation.onMotionChange((event) => {
@@ -61,14 +72,19 @@ const MyBackgroundGeolocation = (props) => {
       //   "Authorization": "Bearer " + token
       // },
       headers: {              // <-- Optional HTTP headers
-        "Authorization": "Bearer " + user.token
+        "Authorization": "Bearer " + token
       },
       params: {               // <-- Optional HTTP params
-        "auth_token": user.token
+        "auth_token": token
       }
     }).then((state) => {
-      setEnabled(state.enabled)
       console_log("- BackgroundGeolocation is configured and ready: ", state.enabled);
+      //setEnabled(state.enabled)
+      if(state.enabled) {
+        setEnabled(state.enabled)
+      }else{
+        //setEnabled(true)
+      }
     });
 
     return () => {
@@ -84,13 +100,13 @@ const MyBackgroundGeolocation = (props) => {
 
   /// 3. start / stop BackgroundGeolocation
   React.useEffect(() => {
-    if (enabled && !empty(user.token)) {
+    if (enabled && !empty(token)) {
       BackgroundGeolocation.start();
     } else {
       BackgroundGeolocation.stop();
       setLocation('');
     }
-  }, [enabled, user]);
+  }, [enabled, token]);
 
   React.useEffect(() => {
     if (location_enabled) {

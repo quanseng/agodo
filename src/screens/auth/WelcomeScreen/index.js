@@ -3,7 +3,7 @@ import { NavigationActions, StackActions } from 'react-navigation';
 import { ImageBackground, Image, StatusBar, View, Text } from 'react-native';
 
 import styles from './styles';
-import { ROUTE_HOME, ROUTE_SIGNUP } from '../../../routes/RouteNames';
+import { ROUTE_HOME, ROUTE_LOCATION_ENABLE, ROUTE_SIGNUP } from '../../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../../utils/Misc';
 import { useState } from 'react';
@@ -13,12 +13,13 @@ import MyButton from '../../../components/MyButton';
 import { setLightStatusBarStyle } from '../../../utils/Utils';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { navReset } from '../../../utils/Nav';
+import { navReset, navResetLogin } from '../../../utils/Nav';
 
 const WelcomeScreen = (props) => {
   const { navigation } = props;
 
   const { signed, user } = useSelector(state => state.auth);
+  const { location_enabled } = useSelector(state => state.settings);
   console_log("WelcomeScreen signed, user:::", signed, user)
 
   useFocusEffect(
@@ -31,14 +32,16 @@ const WelcomeScreen = (props) => {
     if (signed && user['token']) {
       // continue
     } else {
-      let routeArr = [ROUTE_SIGNUP]
-      navReset(routeArr, {}, navigation)
+      navResetLogin(navigation)
     }
   }, [signed, user])
 
   const onPressNext = () => {
     console_log("onPressNext::::")
-    let routeArr = [ROUTE_HOME]
+    let routeArr = [ROUTE_LOCATION_ENABLE]
+    if(location_enabled){
+      routeArr = [ROUTE_HOME]
+    }
     navReset(routeArr, {}, navigation)
   }
 

@@ -46,8 +46,8 @@ const data = [
 const IntroductionScreen = (props) => {
   const { navigation } = props;
 
-  const { signed, user } = useSelector(state => state.auth);
-  console_log("IntroductionScreen signed, user:::", signed, user)
+  const { signed } = useSelector(state => state.auth);
+  console_log("IntroductionScreen signed:::", signed)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -56,14 +56,14 @@ const IntroductionScreen = (props) => {
   );
 
   useEffect(() => {
-    if (signed && user.token) {
+    if (signed) {
       navigation.reset({
         index: 0,
         routes: [{ name: ROUTE_WELCOME }] //ROUTE_LOCATION_ENABLE, ROUTE_WELCOME
       })
  
     }
-  }, [signed, user])
+  }, [signed])
 
 
   const sliderRef = useRef(null)

@@ -21,15 +21,15 @@ const BottomTab = createBottomTabNavigator();
 
 export default UserTabNavigator = () => {
   const navigation = useNavigation()
-  const { signed, user } = useSelector(state => state.auth);
-  console_log("UserTabNavigator signed, user:::", signed, user)
+  const { signed } = useSelector(state => state.auth);
+  console_log("UserTabNavigator signed:::", signed)
   useEffect(() => {
-    if (signed && user['token']) {
+    if (signed) {
       // continue
     } else {
       navResetLogin(navigation)
     }
-  }, [signed, user])
+  }, [signed])
 
   // useFocusEffect(
   //   React.useCallback(() => {

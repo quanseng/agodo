@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, View, Text, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
 import { requestMultiple, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 import CustomStyle from '../../../styles/CustomStyle';
@@ -25,7 +25,7 @@ import { useEffect } from 'react';
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 import { checkApiIsLoading, endApiLoading, showCarema, showImageLibrary, showToast, startApiLoading } from '../../../utils/Utils';
-import { apiGetAllStates, apiLoginRequired, apiResponseIsSuccess, apiUserGetProfile, apiUserUpdateProfile } from '../../../utils/API';
+import { apiLoginRequired, apiResponseIsSuccess, apiUserGetProfile, apiUserUpdateProfile } from '../../../utils/API';
 import { navReset, navResetLogin } from '../../../utils/Nav';
 import { Indicator } from '../../../components/Indicator';
 import { setUser } from '../../../redux/auth/actions';
@@ -46,21 +46,25 @@ const ProfileScreen = (props) => {
   const [imageSide, setImageSide] = useState("avatar");
 
   useEffect(() => {
-    if(signed){
+    if (signed) {
       setFormData({ ...user, avatar: null })
     }
-
     callApiGetScreenData()
-  }, [user])
+  }, [])
 
-  const callApiGetScreenData = async () => {
+  const callApiGetScreenData = async (show_loading = true) => {
     const apiKey = "apiUserGetProfile";
     if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
       return false;
     }
-    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    if (show_loading) {
+      startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    }
     const response = await apiUserGetProfile();
     console_log("apiUserGetProfile response:::", response)
+    if (show_loading) {
+      endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    }
     if (apiResponseIsSuccess(response)) {
       let userInfo = response['data']['user']
       setFormData({ ...userInfo, avatar: null })
@@ -180,13 +184,22 @@ const ProfileScreen = (props) => {
     if (!isValid) {
       return false
     }
+    await callApiUpdateScreenData()
+  }
+
+  const callApiUpdateScreenData = async (show_loading = true) => {
     const apiKey = "apiUserUpdateProfile";
     if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
       return false;
     }
-    startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    if (show_loading) {
+      startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    }
     const response = await apiUserUpdateProfile(formData);
     console_log("apiUserUpdateProfile response:::", response)
+    if (show_loading) {
+      endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    }
     if (apiResponseIsSuccess(response)) {
       let userInfo = response['data']['user']
       setFormData({ ...userInfo, avatar: null })
@@ -199,7 +212,24 @@ const ProfileScreen = (props) => {
         showToast({ message: response.message })
       }
     }
-    endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    return true
+  }
+
+  const onPressLogout = () => {
+    //dispatch(signOut());
+    //navResetLogin(navigation)
+    Alert.alert(
+      "Sign out",
+      "Are you sure you sign out?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console_log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => navResetLogin(navigation) }
+      ]
+    )
   }
 
   return (
@@ -288,14 +318,17 @@ const ProfileScreen = (props) => {
               <View style={[AuthStyle.authFormFooter]}>
                 <View style={[CustomStyle.formControl]}>
                   <MyButton mode="contained" onPress={() => onPressSubmit()}>
-                    Update Profile
+                    Update profile
+                  </MyButton>
+                </View>
+                <View style={[CustomStyle.formControl]}>
+                  <MyButton mode="contained" buttonColor="#f11133" onPress={() => onPressLogout()}>
+                    Sign out
                   </MyButton>
                 </View>
               </View>
             </View>
           </View>
-
-
         </View>
       </ScrollView>
 

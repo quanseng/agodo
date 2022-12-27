@@ -1,4 +1,4 @@
-import { Platform, Dimensions } from 'react-native';
+import { Platform, Dimensions, Alert } from 'react-native';
 import { isTablet } from 'react-native-device-info';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
@@ -62,14 +62,14 @@ export const setDarkStatusBarStyle = (statusbar) => {
   if (isAndroid) {
     statusbar.setBackgroundColor('rgba(255,255,255,0)');
     statusbar.setTranslucent(true);
-  } 
+  }
 }
 export const setLightStatusBarStyle = (statusbar) => {
   statusbar.setBarStyle('light-content');
   if (isAndroid) {
     statusbar.setBackgroundColor('rgba(255,255,255,0)');
     statusbar.setTranslucent(true);
-  } 
+  }
 }
 
 export const apiRequest = async (method, url, body = null, headers = null, isCancelled = false) => {
@@ -90,7 +90,7 @@ export const apiRequest = async (method, url, body = null, headers = null, isCan
   return axios(payload).then(onSuccess).catch(onError);
 }
 
-export const checkLoading = (loadingList = null, STATIC_VALUES=null, setLoading) => {
+export const checkLoading = (loadingList = null, STATIC_VALUES = null, setLoading) => {
   let curLoadingList = [...STATIC_VALUES.current['apiLoadingList']]
   if (loadingList !== null) {
     curLoadingList = loadingList
@@ -99,17 +99,17 @@ export const checkLoading = (loadingList = null, STATIC_VALUES=null, setLoading)
   setLoading(isLoading)
   return isLoading
 }
-export const startApiLoading = (apiKey, STATIC_VALUES=null, setLoading) => {
+export const startApiLoading = (apiKey, STATIC_VALUES = null, setLoading) => {
   const newApiLoadingList = addItemToArray([...STATIC_VALUES.current['apiLoadingList']], apiKey)
   STATIC_VALUES.current['apiLoadingList'] = (newApiLoadingList)
   checkLoading(newApiLoadingList, STATIC_VALUES, setLoading)
 }
-export const endApiLoading = (apiKey, STATIC_VALUES=null, setLoading) => {
+export const endApiLoading = (apiKey, STATIC_VALUES = null, setLoading) => {
   const newApiLoadingList = removeItemFromArray([...STATIC_VALUES.current['apiLoadingList']], apiKey)
   STATIC_VALUES.current['apiLoadingList'] = (newApiLoadingList)
   checkLoading(newApiLoadingList, STATIC_VALUES, setLoading)
 }
-export const checkApiIsLoading = (apiKey, STATIC_VALUES=null) => {
+export const checkApiIsLoading = (apiKey, STATIC_VALUES = null) => {
   if (!STATIC_VALUES.current['apiLoadingList'].includes(apiKey)) {
     return false;
   } else {
@@ -137,11 +137,11 @@ export const showToast = (option = null) => { //show toast something like native
     toastOption = { ...toastOption, ...option }
   }
 
-  if(toastOption.message === ""){
+  if (toastOption.message === "") {
     return false;
   }
 
-  if(toastInstance !== null) {
+  if (toastInstance !== null) {
     Toast.hide(toastInstance);
   }
 
@@ -177,7 +177,7 @@ export const showToast = (option = null) => { //show toast something like native
   return toast;
 }
 
-export const showCarema = async (opt={}) => {
+export const showCarema = async (opt = {}) => {
   const options = {
     mediaType: 'photo',
     quality: 1,
@@ -185,19 +185,34 @@ export const showCarema = async (opt={}) => {
     saveToPhotos: true,
     presentationStyle: 'pageSheet'
   }
-  const result = await launchCamera({...options, ...opt});
-  console.log("launchCamera options,result::::", {...options, ...opt}, result)
+  const result = await launchCamera({ ...options, ...opt });
+  console.log("launchCamera options,result::::", { ...options, ...opt }, result)
   return result;
 }
-export const showImageLibrary = async (opt={}) => {
+export const showImageLibrary = async (opt = {}) => {
   const options = {
     mediaType: 'photo',
     quality: 1,
     saveToPhotos: true,
     presentationStyle: 'pageSheet'
   }
-  const result = await launchImageLibrary({...options, ...opt});
-  console.log("launchImageLibrary options,result::::", {...options, ...opt}, result)
+  const result = await launchImageLibrary({ ...options, ...opt });
+  console.log("launchImageLibrary options,result::::", { ...options, ...opt }, result)
   return result;
+}
+
+export const showAlert = async () => {
+  Alert.alert(
+    "Alert Title",
+    "My Alert Msg",
+    [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      { text: "OK", onPress: () => console.log("OK Pressed") }
+    ]
+  )
 }
 

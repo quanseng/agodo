@@ -14,13 +14,20 @@ import MyButton from '../../../components/MyButton';
 import { TextInput } from 'react-native-paper';
 import MyTextInput from '../../../components/MyTextInput';
 import { COLOR } from '../../../utils/Constants';
-import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import { useDispatch } from 'react-redux';
 import { updateSettingData } from '../../../redux/settings/actions';
+import { setLightStatusBarStyle } from '../../../utils/Utils';
 
 const LocationEnableScreen = (props) => {
   const { navigation } = props;
   const dispatch = useDispatch();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setLightStatusBarStyle(StatusBar)
+    }, [])
+  )
+
 
   const gotoNextPage = (reset = false) => {
     console_log("gotoNextPage::::")

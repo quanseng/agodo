@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { ScrollView, ImageBackground, Image, StatusBar, View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 
 import styles from './styles';
-import { ROUTE_SIGNUP } from '../../../routes/RouteNames';
+import { ROUTE_AT_MY_DESTINATION, ROUTE_AT_MY_LOCATION, ROUTE_ON_MY_ROUTE, ROUTE_SIGNUP } from '../../../routes/RouteNames';
 import { useFocusEffect } from '@react-navigation/native';
 import { console_log, get_utc_timestamp_ms } from '../../../utils/Misc';
 import { useState } from 'react';
@@ -11,22 +11,114 @@ import BaseStyle from '../../../styles/BaseStyle';
 import MyButton from '../../../components/MyButton';
 import { TextInput } from 'react-native-paper';
 import MyTextInput from '../../../components/MyTextInput';
-import { COLOR } from '../../../utils/Constants';
+import { COLOR, DEFAULT_LOCATION, SEARCH_TYPE } from '../../../utils/Constants';
 import MySearchChargerBox from '../../../components/MySearchChargerBox';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import MyImageSourceModal from '../../../components/MyImageSourceModal';
 import MyBottomSheet from '../../../components/MyBottomSheet';
 import { setDarkStatusBarStyle } from '../../../utils/Utils';
 import MyScreenHeader from '../../../components/MyScreenHeader';
+import { useDispatch, useSelector } from 'react-redux';
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+import { checkApiIsLoading, endApiLoading, showCarema, showImageLibrary, showToast, startApiLoading } from '../../../utils/Utils';
+import { apiLoginRequired, apiResponseIsSuccess, apiUserGetMapData } from '../../../utils/API';
+import { navReset, navResetLogin } from '../../../utils/Nav';
+import { Indicator } from '../../../components/Indicator';
+import { setUser } from '../../../redux/auth/actions';
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+import myLocationMarkerPng from '../../../assets/images/icons/my_location.png';
+import evMarkerPng from '../../../assets/images/icons/location.png';
+import { useEffect } from 'react';
 
 const MapScreen = (props) => {
-  const { navigation } = props;
+  const { navigation, route } = props;
+  console_log("route.params:::", route.params)
+  const { search_params } = route.params;
+  console_log("search_params:::", search_params)
+
+  const dispatch = useDispatch();
+  ///////////////////////////////////////////////start common header//////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(false);
+  const STATIC_VALUES = useRef(
+    {
+      apiLoadingList: [],
+    }
+  )
+  ///////////////////////////////////////////////end common header///////////////////////////////////////////////////////
+
+  const { latitude, longitude } = useSelector(state => state.auth.user);
+  console_log("Map page latitude, longitude:::", latitude, longitude)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if(search_params){
+        callApiGetScreenData(false)
+      }else{
+        
+      }
+    }, [])
+  )
+
+  const defaultFormData = {
+    ev_list: []
+  }
+  const [formData, setFormData] = useState(defaultFormData);
+  const callApiGetScreenData = async (show_loading = true) => {
+    const apiKey = "apiUserGetMapData";
+    if (checkApiIsLoading(apiKey, STATIC_VALUES)) {
+      return false;
+    }
+    if (show_loading) {
+      startApiLoading(apiKey, STATIC_VALUES, setLoading);
+    }
+    const response = await apiUserGetMapData();
+    //console_log("apiUserGetMapData response:::", response)
+    if (show_loading) {
+      endApiLoading(apiKey, STATIC_VALUES, setLoading)
+    }
+    if (apiResponseIsSuccess(response)) {
+      let userInfo = response['data']['user']
+      let ev_list = response['data']['ev_list']
+      console_log("ev_list:::", ev_list)
+      let update_data = { ...formData }
+      update_data['ev_list'] = ev_list
+      setFormData(update_data)
+    } else {
+      if (apiLoginRequired(response)) {
+        navResetLogin(navigation)
+      } else {
+        showToast({ message: response.message })
+      }
+    }
+  }
 
   const [visibleSearchChargerModal, setVisibleSearchChargerModal] = useState(false)
 
   const onPressSarch = () => {
+    console_log("chargerType:::", chargerType)
+    if (chargerType === SEARCH_TYPE.AT_MY_LOCATION) {
+      navigation.navigate(ROUTE_AT_MY_LOCATION)
+    }
+    else if (chargerType === SEARCH_TYPE.ON_MY_ROUTE) {
+      navigation.navigate(ROUTE_ON_MY_ROUTE)
+    }
+    else if (chargerType === SEARCH_TYPE.AT_MY_DESTINATION) {
+      navigation.navigate(ROUTE_AT_MY_DESTINATION)
+    }
+
     setVisibleSearchChargerModal(false);
   }
+
+  const getMyLocation = () => {
+    const userLocation = {
+      latitude: (latitude ? latitude : DEFAULT_LOCATION.LATITUDE),
+      longitude: (longitude ? longitude : DEFAULT_LOCATION.LONGITUDE)
+    }
+    return userLocation
+  }
+
+  const [chargerType, setChargerType] = useState(SEARCH_TYPE.AT_MY_LOCATION)
 
   return (
     <View style={[CustomStyle.screenContainer]}>
@@ -35,12 +127,35 @@ const MapScreen = (props) => {
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
           style={CustomStyle.map}
           region={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
+            ...getMyLocation(),
+            latitudeDelta: DEFAULT_LOCATION.RADIUS,
+            longitudeDelta: DEFAULT_LOCATION.RADIUS,
           }}
         >
+          <Marker
+            coordinate={{
+              ...getMyLocation()
+            }}
+            image={myLocationMarkerPng}
+          >
+            {/* <Image
+              source={require('../../../assets/images/icons/my_location.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            /> */}
+          </Marker>
+
+          {formData['ev_list'].map((ev, index) => (
+            <Marker
+              title={`${ev.plug_type} ${`, `} ${ev.universal_plug}`}
+              key={ev.id}
+              coordinate={{
+                latitude: ev.latitude,
+                longitude: ev.longitude
+              }}
+              image={evMarkerPng}
+            />
+          ))}
         </MapView>
 
         <TouchableOpacity
@@ -66,6 +181,8 @@ const MapScreen = (props) => {
               </View>
               <View style={[CustomStyle.formControl]}>
                 <MySearchChargerBox
+                  chargerType={chargerType}
+                  setChargerType={setChargerType}
                 />
               </View>
 
@@ -80,6 +197,7 @@ const MapScreen = (props) => {
           </MyBottomSheet>
         )
       }
+      {(loading) && (<Indicator />)}
     </View>
   )
 }

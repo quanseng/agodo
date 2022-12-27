@@ -10,7 +10,7 @@ export default function authReducer(state = rawState, action) {
         case types.SET_USER:
             return {
                 ...state,
-                user: {...state.user, ...action.payload}
+                user: {...state.user, ...action.payload }
             };
         case types.SIGN_IN:
             return {

@@ -27,12 +27,6 @@ import { setDarkStatusBarStyle } from '../../../utils/Utils';
 const ChargingScreen = (props) => {
   const { navigation } = props;
 
-  useFocusEffect(
-    React.useCallback(() => {
-      setDarkStatusBarStyle(StatusBar)
-    }, [])
-  );
-
   const defaultFormData = {
     state: "",
     phone: ""
