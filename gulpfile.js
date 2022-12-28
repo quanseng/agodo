@@ -8,7 +8,7 @@ var paths = {
     ios: 'ios',
     public: 'assets',
     backup: 'backup',
-};
+}
 
 //Create backup zip file
 gulp.task('backup', function () {

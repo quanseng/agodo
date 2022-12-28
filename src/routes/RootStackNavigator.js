@@ -31,6 +31,7 @@ import RgRegPersonalScreen from '../screens/auth/RgRegPersonalScreen';
 import RgRegIdScreen from '../screens/auth/RgRegIdScreen';
 import RgRegVehicleScreen from '../screens/auth/RgRegVehicleScreen';
 import ProfileScreen from '../screens/user/ProfileScreen';
+import ChargingScreen from '../screens/user/ChargingScreen';
 
 const WhiteTheme = {
   ...DefaultTheme,
@@ -74,7 +75,7 @@ const RootStackNavigator = () => {
         />
         <Stack.Screen
           name={ROUTE_TEST1}
-          component={ProfileScreen}
+          component={ChargingScreen}
           options={{
             headerShown: false
           }}
