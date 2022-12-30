@@ -53,6 +53,7 @@ const MyAvatarBox = (props) => {
               <Image
                 resizeMode="contain"
                 style={[CustomStyle.avatar]}
+                defaultSource={require('../../assets/images/data/avatar-placeholder.png')}
                 source={{ uri: fileData['uri'] }}
               />
             </TouchableOpacity>

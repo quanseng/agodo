@@ -147,7 +147,10 @@ const CustomStyle = StyleSheet.create({
         borderRadius: SIZE.BUTTON_RADIUS,
         minWidth: SIZE.BUTTON_MIN_SIZE,
     },
-
+    markerImg: {
+        width: 40,
+        height: 40
+    },
 });
 
 export default CustomStyle;

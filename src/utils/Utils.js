@@ -186,7 +186,7 @@ export const showCarema = async (opt = {}) => {
     presentationStyle: 'pageSheet'
   }
   const result = await launchCamera({ ...options, ...opt });
-  console.log("launchCamera options,result::::", { ...options, ...opt }, result)
+  //console.log("launchCamera options,result::::", { ...options, ...opt }, result)
   return result;
 }
 export const showImageLibrary = async (opt = {}) => {
@@ -197,7 +197,7 @@ export const showImageLibrary = async (opt = {}) => {
     presentationStyle: 'pageSheet'
   }
   const result = await launchImageLibrary({ ...options, ...opt });
-  console.log("launchImageLibrary options,result::::", { ...options, ...opt }, result)
+  //console.log("launchImageLibrary options,result::::", { ...options, ...opt }, result)
   return result;
 }
 

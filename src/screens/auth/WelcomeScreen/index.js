@@ -67,7 +67,7 @@ const WelcomeScreen = (props) => {
             {
               (user['avatar_url']) ? (
                 <>
-                  <Image source={{ uri: user['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                  <Image defaultSource={require('../../../assets/images/data/avatar-placeholder.png')} source={{ uri: user['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
                 </>
               ) : (
                 <>

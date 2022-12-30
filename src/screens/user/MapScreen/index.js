@@ -35,7 +35,7 @@ const MapScreen = (props) => {
   const { navigation, route } = props;
   console_log("route.params:::", route.params)
   let search_params = null
-  if(route.params) {
+  if (route.params) {
     search_params = route.params.search_params
   }
   console_log("search_params:::", search_params)
@@ -103,7 +103,7 @@ const MapScreen = (props) => {
     return true
   }
 
-  const processSearchResult = (response)=>{
+  const processSearchResult = (response) => {
     setSearching(false);
 
     let userInfo = response['data']['user']
@@ -186,9 +186,9 @@ const MapScreen = (props) => {
   const [currentEvAccepted, setCurrentEvAccepted] = useState(false)
 
   const onPressAcceptEv = (flag) => {
-    if(flag){
+    if (flag) {
       callApiAcceptEv()
-    }else{
+    } else {
       setCurrentEv(null)
     }
     setVisibleAcceptEvModal(false)
@@ -202,7 +202,7 @@ const MapScreen = (props) => {
     if (show_loading) {
       startApiLoading(apiKey, STATIC_VALUES, setLoading);
     }
-    const response = await apiUserAcceptEv({...currentEv});
+    const response = await apiUserAcceptEv({ ...currentEv });
     if (show_loading) {
       endApiLoading(apiKey, STATIC_VALUES, setLoading)
     }
@@ -238,10 +238,11 @@ const MapScreen = (props) => {
               ...getMyLocation()
             }}
             image={myLocationMarkerPng}
+            //tracksViewChanges={true}
           >
             {/* <Image
               source={require('../../../assets/images/icons/my_location.png')}
-              style={{ width: 40, height: 40 }}
+              style={CustomStyle.markerImg}
               resizeMode="contain"
             /> */}
           </Marker>
@@ -255,7 +256,14 @@ const MapScreen = (props) => {
                 longitude: ev.longitude
               }}
               image={evMarkerPng}
-            />
+              //tracksViewChanges={true}
+            >
+              {/* <Image
+                source={require('../../../assets/images/icons/location.png')}
+                style={CustomStyle.markerImg}
+                resizeMode="contain"
+              /> */}
+            </Marker>
           ))}
         </MapView>
 

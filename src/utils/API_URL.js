@@ -9,6 +9,7 @@ export const urlLogin = Config.SERVER_API_URL + url_sub_prefix + "/token";
 
 url_sub_prefix = "/user"
 export const urlUpdateLocation = Config.SERVER_API_URL + url_sub_prefix + "/update-location";
+export const urlUpdateLocationFree = Config.SERVER_API_URL + url_sub_prefix + "/update-location-free";
 export const urlUserGetProfile = Config.SERVER_API_URL + url_sub_prefix + "/get-profile";
 export const urlUserUpdateProfile = Config.SERVER_API_URL + url_sub_prefix + "/update-profile";
 export const urlUserGetMapData = Config.SERVER_API_URL + url_sub_prefix + "/get-map-data";

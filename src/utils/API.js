@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
-import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUserAcceptEv, urlUserGetMapData, urlUserGetProfile, urlUserSearchEvList, urlUserUpdateProfile } from './API_URL';
+import { urlCheckPhone, urlCheckSMSCode, urlGetAllStates, urlRegister, urlUpdateLocation, urlUpdateLocationFree, urlUserAcceptEv, urlUserGetMapData, urlUserGetProfile, urlUserSearchEvList, urlUserUpdateProfile } from './API_URL';
 import { console_log } from './Misc';
 
 export const MULTIPART_HEADER = {
   headers: {
-    "Accept":"application/json, text/plain, /",
+    "Accept": "application/json, text/plain, /",
     "Content-Type": "multipart/form-data",
   }
 }
@@ -164,7 +164,7 @@ export const apiUserUpdateProfile = async (payload = null) => {
     console_log("res::::::", res)
     return res.data;
   } catch (error) {
-     console_log("error:::::::::::", error)
+    console_log("error:::::::::::", error)
     return false;
   }
 }
@@ -187,7 +187,7 @@ export const apiUserSearchEvList = async (payload = null) => {
     formData.append('start_point', payload['start_point'])
     formData.append('end_point', payload['end_point'])
     formData.append('start_latitude', payload['start_latitude'])
-    formData.append('end_longitude', payload['end_longitude'])    
+    formData.append('end_longitude', payload['end_longitude'])
     const res = await axios.post(urlUserSearchEvList, formData, MULTIPART_HEADER);
     return res.data;
   } catch (error) {
@@ -205,6 +205,20 @@ export const apiUserAcceptEv = async (payload = null) => {
       formData.append(k, payload[k])
     }
     const res = await axios.post(urlUserAcceptEv, formData, MULTIPART_HEADER);
+    return res.data;
+  } catch (error) {
+    if (error.response) {
+      return error.response.data
+    }
+    return error;
+  }
+}
+
+export const apiUpdateDeviceLocation = async (payload = null) => {
+  try {
+    //const formData = new FormData();
+    //formData.append('location', JSON.stringify(payload))
+    const res = await axios.post(urlUpdateLocation, { location: payload });
     return res.data;
   } catch (error) {
     if (error.response) {

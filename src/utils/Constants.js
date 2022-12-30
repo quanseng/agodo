@@ -2,13 +2,24 @@ import moment from 'moment';
 import { Platform, Dimensions, StatusBar } from "react-native";
 const { width, height } = Dimensions.get("window");
 
+export const SERVER_POSITION = "prod" //prod, localhost
+
+
+const config_setting = {
+  SERVER_API_URL: "http://192.168.0.72:8089",
+  SERVER_SOCKET_URL: "http://localhost:8089",
+  TERMS_AND_CONDITION_URL: "http://agodo.online/terms/",
+  PRIVACY_POLICY_URL: "http://agodo.online/terms/"
+}
+if(SERVER_POSITION === "prod"){
+  config_setting['SERVER_API_URL'] = "http://agodo.online:8089"
+  config_setting['SERVER_SOCKET_URL'] = "http://agodo.online:8089"
+  config_setting['TERMS_AND_CONDITION_URL'] = "http://agodo.online/terms/"
+  config_setting['PRIVACY_POLICY_URL'] = "http://agodo.online/terms/"
+}
+
 export const Config = {
-  SERVER_API_URL: "http://192.168.0.72:8088",
-  SERVER_SOCKET_URL: "http://localhost:8088",
-  TERMS_AND_CONDITION_URL:
-    "https://www.fluidformpilates.com/terms/",
-  PRIVACY_POLICY_URL:
-    "https://www.fluidformpilates.com/terms/"
+  ...config_setting
 }
 
 export const COLOR = {

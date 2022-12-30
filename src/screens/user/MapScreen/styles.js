@@ -17,7 +17,8 @@ const styles = StyleSheet.create({
     height: 110,
     backgroundColor: COLOR.BG_GRAY,
     justifyContent: 'center'
-  }
+  },
+
 
 
 });

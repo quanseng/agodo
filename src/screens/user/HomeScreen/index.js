@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ScrollView, ImageBackground, Image, StatusBar, View, Text, TouchableOpacity } from 'react-native';
+import { ScrollView, ImageBackground, Image, StatusBar, View, Text, TouchableOpacity, Pressable } from 'react-native';
 
 import styles from './styles';
 import { ROUTE_HOME_TAB, ROUTE_MAP, ROUTE_PROFILE, ROUTE_SETTING_TAB, ROUTE_SIGNUP, ROUTE_USER_TAB_NAVIGATOR } from '../../../routes/RouteNames';
@@ -16,7 +16,7 @@ import MySearchChargerBox from '../../../components/MySearchChargerBox';
 import { setLightStatusBarStyle } from '../../../utils/Utils';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { navReset } from '../../../utils/Nav';
+import { navNavigate, navReset } from '../../../utils/Nav';
 
 const HomeScreen = (props) => {
   const { navigation } = props;
@@ -43,14 +43,21 @@ const HomeScreen = (props) => {
     setTabUri(uri)
     if (uri === 'home') {
       let routeArr = [ROUTE_USER_TAB_NAVIGATOR, ROUTE_HOME_TAB, ROUTE_MAP]
-      navReset(routeArr, {}, navigation)
+      navNavigate(routeArr, {}, navigation)
     } else {
       let routeArr = [ROUTE_USER_TAB_NAVIGATOR, ROUTE_SETTING_TAB, ROUTE_PROFILE]
-      navReset(routeArr, {}, navigation)
+      navNavigate(routeArr, {}, navigation)
     }
   }
 
   const [chargerType, setChargerType] = useState(SEARCH_TYPE.AT_MY_LOCATION)
+
+  const onPressNext = ()=>{
+    let routeArr = [ROUTE_USER_TAB_NAVIGATOR, ROUTE_HOME_TAB, ROUTE_MAP]
+    navNavigate(routeArr, {}, navigation)
+  }
+
+  const [searchValue, setSearchValue] = useState("")
 
   return (
     <ImageBackground style={[CustomStyle.screenContainer]} source={require('../../../assets/images/data/home_bg.png')}>
@@ -70,7 +77,7 @@ const HomeScreen = (props) => {
               {
                 (user['avatar_url']) ? (
                   <>
-                    <Image source={{ uri: user['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
+                    <Image defaultSource={require('../../../assets/images/data/avatar-placeholder.png')} source={{ uri: user['avatar_url'] }} style={[CustomStyle.avatar]} alt="avatar" resizeMode="contain" />
                   </>
                 ) : (
                   <>
@@ -97,8 +104,11 @@ const HomeScreen = (props) => {
                 selectionColor={COLOR.FONT_GRAY}
                 style={[CustomStyle.searchText]}
                 returnKeyType={`search`}
+                onSubmitEditing={() => onPressNext()}
+                value={searchValue}
+                onChangeText={text => setSearchValue(text)}
                 textAlign="center"
-                right={<TextInput.Icon icon="magnify" />}
+                right={<TextInput.Icon icon="magnify" onPress={() => onPressNext()} />}
                 theme={{
                   colors: {
                     primary: COLOR.APP,

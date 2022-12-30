@@ -203,10 +203,10 @@ const RgRegPaymentScreen = (props) => {
                               <MyTextInput
                                 label={`Billing Address`}
                                 placeholder={``}
-                                value={formData['phone']}
+                                value={formData['billing_address']}
                                 returnKeyType="done"
                                 keyboardType="default"
-                                onChangeText={text => onChangeFormField("phone", text)}
+                                onChangeText={text => onChangeFormField("billing_address", text)}
                               />
                             </View>
                           </View>

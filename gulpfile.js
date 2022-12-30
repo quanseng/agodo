@@ -6,6 +6,7 @@ var paths = {
     html: 'src',
     android: 'android',
     ios: 'ios',
+    data: 'data',
     public: 'assets',
     backup: 'backup',
 }
@@ -25,6 +26,7 @@ gulp.task('backup', function () {
             paths.html + '/**/*.*',
             paths.android + '/**/*.*',
             paths.ios + '/**/*.*',
+            paths.data + '/**/*.*',
             'gulpfile.js',
             'package.json',
             'index.js',

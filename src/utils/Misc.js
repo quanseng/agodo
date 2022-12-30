@@ -2,7 +2,7 @@ import { Dimensions } from 'react-native';
 import { Platform } from 'react-native'
 
 export const console_log = (...log_data) => {
-  //return false;
+  return false;
   console.log(...log_data)
 };
 

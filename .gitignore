@@ -63,3 +63,5 @@ buck-out/
 /install-guide.txt
 /android/app/src/main/AndroidManifest.xml
 /src/utils/Constants.js
+
+data/
